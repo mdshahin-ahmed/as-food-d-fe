@@ -1,0 +1,12 @@
+.appBody {
+  padding-left: 60px;
+  padding-top: 44px;
+  width: 100%;
+  display: block;
+  position: relative;
+  background: #fff;
+  min-height: 100vh;
+  /* min-width: 1200px; */
+  min-width: 100vw;
+  overflow: auto;
+}

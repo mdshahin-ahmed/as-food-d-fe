@@ -1,0 +1,45 @@
+.import-file-input input {
+  padding: 5px !important;
+}
+.meal-card-image img {
+  height: 240px !important;
+}
+
+.meal-modify-btn svg {
+  font-size: 13px;
+  margin-right: 5px;
+  margin-bottom: -1px;
+}
+.mealCardHeader {
+  padding: 10px 10px;
+  text-align: center;
+  background: #0d7c66;
+  border-radius: 0.28571429rem 0.28571429rem 0 0;
+  color: white !important;
+}
+
+.cardShadow {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5) !important;
+}
+
+.availableBtn {
+  background-color: #950101 !important;
+  color: white !important;
+}
+
+.priceBtn {
+  color: white !important;
+  background-color: #ff0066 !important;
+}
+
+.purchaseButton {
+  border-radius: 0px 0px 0.28571429rem 0.28571429rem !important;
+}
+
+.mealDescHeight {
+  height: 125px !important;
+}
+
+.mealContent {
+  background-color: #feffde !important;
+}

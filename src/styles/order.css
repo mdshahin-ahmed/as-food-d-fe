@@ -1,0 +1,67 @@
+.orderStatusBtn {
+  padding: 6px 12px;
+  border-radius: 13px;
+  color: white;
+}
+
+.pendingOrderStatus {
+  background-color: #fbbd08;
+}
+.deliveredOrderStatus {
+  background-color: #21ba45;
+}
+.approvedOrderStatus {
+  background-color: #21ba45;
+}
+.canceledOrderStatus {
+  background-color: #d01919;
+}
+.orderStatusDropdown {
+  min-width: 100px !important;
+  width: 100%;
+}
+.orderUid {
+  color: #ff0066;
+  font-size: 25px;
+  font-weight: bold;
+}
+.orderHeaderWrap {
+  display: flex;
+  justify-content: space-between;
+}
+.orderFilterWrap {
+  display: flex;
+}
+.orderFilterDropdown {
+  margin-right: 10px;
+}
+
+@media only screen and (max-width: 900px) {
+  /* Mobile devices */
+  .orderHeaderWrap {
+    display: block;
+  }
+  .orderFilterWrap {
+    display: block;
+  }
+  .orderFilterDropdown {
+    margin-right: 0px;
+  }
+}
+
+.মেনু-১ {
+  background-color: #ff0066 !important;
+  color: white !important;
+}
+.মেনু-২ {
+  background-color: #000b58 !important;
+  color: white !important;
+}
+.মেনু-৩ {
+  background-color: #3d5300 !important;
+  color: white !important;
+}
+.মেনু-৪ {
+  background-color: #740938 !important;
+  color: white !important;
+}
