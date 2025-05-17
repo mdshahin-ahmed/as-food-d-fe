@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 export const billSchema = Joi.object({
-  month: Joi.string()
+  monthName: Joi.string()
     .valid(
       "January",
       "February",
@@ -17,7 +17,12 @@ export const billSchema = Joi.object({
       "December"
     )
     .required()
-    .label("Month"),
+    .label("Month")
+    .messages({
+      "any.required": `Month is required`,
+      "string.base": `Month must be a string`,
+      "any.only": `Month is required`,
+    }),
 
-  amount: Joi.number().positive().required().label("Amount"),
+  price: Joi.number().positive().required().label("Amount"),
 });

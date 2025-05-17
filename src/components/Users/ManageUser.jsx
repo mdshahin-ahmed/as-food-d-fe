@@ -81,7 +81,6 @@ const ManageUser = () => {
       addUserMutate(data);
     }
   };
-  console.log(errors);
 
   return (
     <div className="previewLayout">

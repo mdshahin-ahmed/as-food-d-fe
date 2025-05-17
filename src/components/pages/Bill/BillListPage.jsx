@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { FiEdit, FiEdit2 } from "react-icons/fi";
 import {
   Button,
+  Popup,
   Table,
   TableBody,
   TableCell,
@@ -12,12 +13,12 @@ import {
 } from "semantic-ui-react";
 import { useAuth } from "../../../context/app/useAuth";
 import { useClient } from "../../../hooks/pure/useClient";
+import { useDisclosure } from "../../../hooks/pure/useDisclosure";
 import { getFormattedDateTime } from "../../../utils/helper";
+import AddBillModal from "../../Bill/AddBillModal";
 import CustomPagination from "../../common/CustomPagination";
 import NoDataAvailable from "../../common/NoDataAvailable";
 import TableLoader from "../../common/TableLoader";
-import AddBillModal from "../../Bill/AddBillModal";
-import { useDisclosure } from "../../../hooks/pure/useDisclosure";
 
 const BillListPage = () => {
   const { user } = useAuth();
@@ -30,8 +31,8 @@ const BillListPage = () => {
   });
 
   const { data: billList, isFetching: isBillListFetching } = useQuery({
-    queryKey: ["meal-list"],
-    queryFn: () => client("meal"),
+    queryKey: ["bill-list"],
+    queryFn: () => client("bill"),
   });
 
   return (
@@ -63,61 +64,48 @@ const BillListPage = () => {
           </TableHeader>
           <TableBody>
             {billList?.result?.length > 0 && !isBillListFetching ? (
-              billList?.result?.map((cancel, index) => (
+              billList?.result?.map((bill, index) => (
                 <TableRow key={index}>
                   <TableCell>
                     {(queryFilter?.page - 1) * queryFilter?.limit + index + 1}
                   </TableCell>
                   <TableCell className="t-capitalize">
-                    {cancel?.user?.name || "-"}
+                    {bill?.monthName || "-"}
                   </TableCell>
-                  <TableCell>{cancel?.user?.userId || "-"}</TableCell>
-                  <TableCell className="t-capitalize">
-                    <Button className={cancel?.mealName}>
-                      {cancel?.mealName || "-"}
-                    </Button>
-                  </TableCell>
-                  <TableCell>{cancel?.mealType || "-"}</TableCell>
-                  <TableCell>{cancel?.reason || "-"}</TableCell>
+                  <TableCell>{bill?.price || "-"}</TableCell>
+
+                  <TableCell>{getFormattedDateTime(bill?.createdAt)}</TableCell>
+                  <TableCell>{getFormattedDateTime(bill?.updatedAt)}</TableCell>
+
                   <TableCell>
-                    <span
-                      className={`${cancel?.status}OrderStatus orderStatusBtn t-capitalize`}
-                    >
-                      {cancel?.status || "-"}
-                    </span>
+                    <Popup
+                      size="mini"
+                      position="top center"
+                      content="Edit Bill"
+                      trigger={
+                        <Button
+                          icon
+                          onClick={() =>
+                            setCustom({
+                              id: bill?._id,
+                              monthName: bill?.monthName,
+                              price: bill?.price,
+                            })
+                          }
+                        >
+                          <FiEdit2 />
+                        </Button>
+                      }
+                    />
                   </TableCell>
-                  <TableCell>
-                    {getFormattedDateTime(cancel?.createdAt)}
-                  </TableCell>
-                  <TableCell>
-                    {getFormattedDateTime(cancel?.updatedAt)}
-                  </TableCell>
-                  {/* {user?.role === "admin" && (
-                    <TableCell>
-                      <Select
-                        // disabled={cancel?.status === "approved"}
-                        defaultValue={cancel?.status}
-                        className="orderStatusDropdown"
-                        options={cancelRequestStatus || []}
-                        onChange={(e, { value }) =>
-                          handleStatusChange({
-                            status: value,
-                            id: cancel?._id,
-                          })
-                        }
-                      />
-                    </TableCell>
-                  )} */}
                 </TableRow>
               ))
             ) : (
               <>
-                {isBillListFetching && (
-                  <TableLoader columns={user?.role === "admin" ? 9 : 8} />
-                )}
+                {isBillListFetching && <TableLoader columns={6} />}
                 {!isBillListFetching && (
                   <TableRow>
-                    <TableCell colSpan={(user?.role === "admin" && 9) || 8}>
+                    <TableCell colSpan={6}>
                       <NoDataAvailable />
                     </TableCell>
                   </TableRow>

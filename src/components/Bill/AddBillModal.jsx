@@ -14,14 +14,18 @@ import { useClient } from "../../hooks/pure/useClient";
 import { billSchema } from "../../validations/bill.schema";
 import AsToast from "../common/AsToast";
 import { AsForm, AsInput, AsSelect } from "../common/form";
+import { useEffect } from "react";
 
 const AddBillModal = ({ onClose, open = true }) => {
+  const { id, monthName, price } = open;
+
   const client = useClient();
   const queryClient = useQueryClient();
   const {
     control,
     formState: { errors },
     handleSubmit,
+    reset,
   } = useForm({
     defaultValues: {
       monthName: "",
@@ -30,27 +34,53 @@ const AddBillModal = ({ onClose, open = true }) => {
     resolver: joiResolver(billSchema),
   });
 
-  const { mutate: addUserMutate, isPending } = useMutation({
-    mutationFn: (data) => client("cancel", { data: data }),
+  useEffect(() => {
+    if (monthName && price) {
+      reset({ monthName, price });
+    } else {
+      reset({ monthName: "", price: 200 });
+    }
+  }, [open]);
+
+  const { mutate: addBillMutate, isPending } = useMutation({
+    mutationFn: (data) => client("bill", { data: data }),
     onSuccess: () => {
       onClose();
       queryClient.refetchQueries({
-        queryKey: ["cancel-list"],
+        queryKey: ["bill-list"],
         type: "active",
       });
       AsToast.success(
         <div className="errorToast">
           <AiOutlineCheckCircle /> &nbsp;
-          <span>Cancel Request Added Successfully!</span>
+          <span>Bill Added</span>
+        </div>
+      );
+    },
+  });
+  const { mutate: updateBillMutate, isPending: isPendingUpdate } = useMutation({
+    mutationFn: (data) => client(`bill/${id}`, { data: data, method: "PATCH" }),
+    onSuccess: () => {
+      onClose();
+      queryClient.refetchQueries({
+        queryKey: ["bill-list"],
+        type: "active",
+      });
+      AsToast.success(
+        <div className="errorToast">
+          <AiOutlineCheckCircle /> &nbsp;
+          <span>Bill Updated</span>
         </div>
       );
     },
   });
 
   const handleUserSubmit = (data) => {
-    console.log(data);
-
-    // addUserMutate(data);
+    if (id) {
+      updateBillMutate(data);
+    } else {
+      addBillMutate(data);
+    }
   };
   return (
     <Modal
@@ -87,12 +117,12 @@ const AddBillModal = ({ onClose, open = true }) => {
           Cancel
         </Button>
         <Button
-          loading={isPending}
-          disabled={isPending}
+          loading={isPending || isPendingUpdate}
+          disabled={isPending || isPendingUpdate}
           onClick={handleSubmit(handleUserSubmit)}
           primary
         >
-          Create
+          {id ? "Update" : "Create"}
         </Button>
       </ModalActions>
     </Modal>

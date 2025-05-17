@@ -638,3 +638,17 @@ body {
   font-size: 1.2rem;
   font-weight: bold;
 }
+
+.bg-btn-color,
+.ui.icon.button,
+.ui.icon.button.attach {
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px !important;
+  margin-left: 8px;
+  background: #fafbfc !important;
+  padding: 0 !important;
+}

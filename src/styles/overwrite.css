@@ -157,3 +157,7 @@
     margin: 0;
   }
 }
+
+.ui.basic.table th {
+  background: #f8f9fb;
+}
