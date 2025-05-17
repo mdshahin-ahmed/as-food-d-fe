@@ -1,12 +1,13 @@
 import avatar from "@/assets/user-avatar.png";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { FaEdit } from "react-icons/fa";
-import { FaBangladeshiTakaSign } from "react-icons/fa6";
-import { MdAdd, MdDelete } from "react-icons/md";
+import { BiBlock } from "react-icons/bi";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
   Image,
+  Label,
   Popup,
   Table,
   TableBody,
@@ -16,21 +17,17 @@ import {
   TableRow,
 } from "semantic-ui-react";
 import { useGetQueryDataList } from "../../api/query.api";
+import { userRoleColor } from "../../constant/common.constant";
+import { useClient } from "../../hooks/pure/useClient";
 import { useDisclosure } from "../../hooks/pure/useDisclosure";
+import AsToast from "../common/AsToast";
 import CustomPagination from "../common/CustomPagination";
+import DeleteModal from "../common/DeleteModal";
 import NoDataAvailable from "../common/NoDataAvailable";
 import SearchBar from "../common/SearchBar";
 import TableLoader from "../common/TableLoader";
-import AddBalanceModal from "./AddBalanceModal";
-import { useAuth } from "../../context/app/useAuth";
-import DeleteModal from "../common/DeleteModal";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import AsToast from "../common/AsToast";
-import { FiTrash2 } from "react-icons/fi";
-import { useClient } from "../../hooks/pure/useClient";
 
 const UsersList = () => {
-  const { user } = useAuth();
   const client = useClient();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -47,7 +44,7 @@ const UsersList = () => {
   const {
     isOpen: isDeleteOpen,
     onClose: onDeleteClose,
-    setCustom: setDeleteCustom,
+    // setCustom: setDeleteCustom,
   } = useDisclosure();
 
   const { mutate: deleteUserMutate, isPending } = useMutation({
@@ -66,14 +63,46 @@ const UsersList = () => {
       );
     },
   });
+  const { mutate: updateStatusMutation, isPending: isStatusPending } =
+    useMutation({
+      mutationFn: (id) => client(`user/${id}/status`, { method: "PATCH" }),
+      onSuccess: () => {
+        queryClient.refetchQueries({
+          queryKey: ["user/all-list"],
+          type: "active",
+        });
+        onClose();
+        AsToast.success(
+          <div className="errorToast">
+            <FiTrash2 /> &nbsp;
+            <span>User Status Updated</span>
+          </div>
+        );
+      },
+    });
 
   const handleDelete = (id) => {
     deleteUserMutate(id);
   };
+  const handleBlockUser = ({ id }) => {
+    updateStatusMutation(id);
+  };
+  const { isActive } = isOpen;
 
   return (
     <div className="previewLayout">
-      <AddBalanceModal onClose={onClose} open={isOpen} />
+      <DeleteModal
+        modalHeader={`${isActive ? "Block" : "Unblock"} User`}
+        modalContent={`Are you sure you want to ${
+          isActive ? "block" : "unblock"
+        }  user?`}
+        onClose={onClose}
+        confirmText={`${isActive ? "Block" : "Unlock"}`}
+        open={isOpen}
+        isLoading={isStatusPending}
+        onConfirm={() => handleBlockUser(isOpen)}
+        confirm={!isActive}
+      />
       <DeleteModal
         modalHeader="Delete User"
         modalContent="Are you sure you want to delete user?"
@@ -112,6 +141,7 @@ const UsersList = () => {
             <TableHeaderCell>Mobile</TableHeaderCell>
             <TableHeaderCell>Area</TableHeaderCell>
             <TableHeaderCell>Address</TableHeaderCell>
+            <TableHeaderCell>Status</TableHeaderCell>
             <TableHeaderCell>Actions</TableHeaderCell>
           </TableRow>
         </TableHeader>
@@ -128,58 +158,85 @@ const UsersList = () => {
                       className="b-radius-50 headerAvatar"
                       src={user?.imageUrl || avatar}
                     />
-                    <span className="t-capitalize ml-2">{user?.name}</span>
+                    <span className="t-capitalize ml-2">
+                      {user?.name}{" "}
+                      <Label
+                        circular
+                        color={user?.isActive ? "green" : "red"}
+                        empty
+                        size="mini"
+                      />
+                    </span>
                   </div>
                 </TableCell>
                 <TableCell>{user?.userId}</TableCell>
                 <TableCell>
-                  <Button
-                    fluid
-                    className={`roleDesign ${user?.role}Role t-capitalize`}
+                  <Label
+                    size="medium"
+                    color={userRoleColor[user?.role]}
+                    className="labelsStyle"
                   >
                     {user?.role}
-                  </Button>
+                  </Label>
                 </TableCell>
                 <TableCell>{user?.email || "-"}</TableCell>
                 <TableCell>{user?.mobile}</TableCell>
                 <TableCell>{user?.area}</TableCell>
                 <TableCell>{user?.address}</TableCell>
-                <TableCell className="d-flex jcsb">
-                  <Popup
-                    content="Add Balance"
-                    position="top center"
-                    trigger={
-                      <Button onClick={() => setCustom(user?._id)}>
-                        <FaBangladeshiTakaSign />
-                        <MdAdd />
-                      </Button>
-                    }
-                  />
+                <TableCell>
+                  <Label
+                    size="tiny"
+                    color={user?.isActive ? "green" : "red"}
+                    className="labelsStyle"
+                  >
+                    {user?.isActive ? "Active" : "Blocked"}
+                  </Label>
+                </TableCell>
+                <TableCell className="d-flex">
                   <Popup
                     content="Edit User"
                     position="top center"
                     trigger={
-                      <Button onClick={() => navigate(`edit/${user?._id}`)}>
-                        <FaEdit />
+                      <Button
+                        icon
+                        onClick={() => navigate(`edit/${user?._id}`)}
+                      >
+                        <FiEdit2 />
                       </Button>
                     }
                   />
                   <Popup
+                    content="Block User"
+                    position="top center"
+                    trigger={
+                      <Button
+                        id="userBlockButton"
+                        icon
+                        onClick={() =>
+                          setCustom({ id: user?._id, isActive: user?.isActive })
+                        }
+                      >
+                        <BiBlock />
+                      </Button>
+                    }
+                  />
+                  {/* <Popup
                     content="Delete"
                     position="top center"
                     trigger={
                       <Button
-                        color="red"
-                        disabled
+                        // color="red"
+                        // disabled
                         // disabled={
                         //   user?.role === "admin" || user?.role === "manager"
                         // }
+                        icon
                         onClick={() => setDeleteCustom(user?._id)}
                       >
                         <MdDelete />
                       </Button>
                     }
-                  />
+                  /> */}
                 </TableCell>
               </TableRow>
             ))

@@ -1,19 +1,19 @@
 import logo from "@/assets/logo.png";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { Button, Grid, GridColumn, Header, Image } from "semantic-ui-react";
+import { Button, Grid, GridColumn, Image } from "semantic-ui-react";
 import { AsForm, AsInput } from "../../components/common/form";
-import { login } from "../../utils/auth/auth-methods";
-import { signinSchema } from "../../validations/signin/signin.schema";
-import { setToken } from "../../utils/auth/auth-utils";
-import { useAuth } from "../../context/app/useAuth";
 import SendOtpModal from "../../components/ForgotModals/SendOTPModal";
-import { useDisclosure } from "../../hooks/pure/useDisclosure";
-import { useState } from "react";
-import VerifyOtpModal from "../../components/ForgotModals/VerifyOtpModal";
 import UpdatePasswordModal from "../../components/ForgotModals/UpdatePasswordModal";
+import VerifyOtpModal from "../../components/ForgotModals/VerifyOtpModal";
+import { useAuth } from "../../context/app/useAuth";
+import { useDisclosure } from "../../hooks/pure/useDisclosure";
+import { login } from "../../utils/auth/auth-methods";
+import { setToken } from "../../utils/auth/auth-utils";
+import { signinSchema } from "../../validations/signin/signin.schema";
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
@@ -92,9 +92,9 @@ const SignIn = () => {
         >
           <Grid.Column className="loginCardWrap">
             <Image src={logo} />
-            <Header as="h3" color="teal" textAlign="center">
+            <h3 color="teal" className="mt-3 mb-4">
               Log-in to your account
-            </Header>
+            </h3>
             <AsForm control={control} errors={errors} size="large">
               <AsInput
                 maxLength={100}
@@ -121,6 +121,7 @@ const SignIn = () => {
               </span>
               <GridColumn width={16}>
                 <Button
+                  className="mb-3"
                   loading={isPending}
                   disabled={isPending}
                   onClick={handleSubmit(handleSignin)}

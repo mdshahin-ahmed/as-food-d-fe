@@ -6,7 +6,6 @@ import { useAuth } from "../../../context/app/useAuth";
 import { useDisclosure } from "../../../hooks/pure/useDisclosure";
 import { logout } from "../../../utils/auth/auth-methods";
 import DeleteModal from "../DeleteModal";
-import { FaBangladeshiTakaSign } from "react-icons/fa6";
 
 const Header = () => {
   const { user, setUser } = useAuth();
@@ -29,12 +28,6 @@ const Header = () => {
         onConfirm={() => handleDelete(isOpen)}
       />
       <Menu className="headerWrap d-flex jce">
-        <span className="headerBalance">
-          <FaBangladeshiTakaSign />
-        </span>
-        <span className="headerBalanceCount">
-          {user?.balance.toFixed(2) || 0}
-        </span>
         <MenuItem>
           <Popup
             content={user?.name}

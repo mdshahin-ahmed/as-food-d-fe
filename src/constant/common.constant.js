@@ -57,6 +57,12 @@ export const RoleOptions = [
   },
 ];
 
+export const userRoleColor = {
+  admin: "green",
+  employee: "yellow",
+  user: "red",
+};
+
 export const adminOrderStatus = [
   {
     key: "delivered",

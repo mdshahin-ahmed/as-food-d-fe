@@ -652,3 +652,11 @@ body {
   background: #fafbfc !important;
   padding: 0 !important;
 }
+
+.labelsStyle {
+  background: "#ebf5ff";
+  color: "#3182ce";
+  font-weight: "normal" !important;
+  text-align: "center";
+  text-transform: capitalize !important;
+}
