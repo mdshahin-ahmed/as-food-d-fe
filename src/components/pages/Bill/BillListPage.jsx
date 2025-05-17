@@ -44,7 +44,7 @@ const BillListPage = () => {
           </div>
           <div className="action">
             <Button onClick={() => setCustom(true)} primary>
-              Add Bill2
+              Add Bill
             </Button>
           </div>
         </div>

@@ -18,7 +18,6 @@ export const userSchema = Joi.object({
   address: Joi.string().min(3).max(50).required(),
   area: Joi.string().min(1).max(30).required(),
   password: Joi.string().min(5).max(30).required(),
-  userId: Joi.string().required(),
   role: Joi.string().valid("admin", "employee", "user").required().messages({
     "string.base": "Role must be a text.",
     "any.only": "Role must be one of admin or employee or user",
@@ -44,7 +43,6 @@ export const updateUserSchema = Joi.object({
   address: Joi.string().min(3).max(50).required(),
   area: Joi.string().min(1).max(30).required(),
   password: Joi.string().min(5).max(30).optional(),
-  userId: Joi.string().required(),
   role: Joi.string().valid("admin", "employee", "user").required().messages({
     "string.base": "Role must be a text.",
     "any.only": "Role must be one of admin or employee or user",

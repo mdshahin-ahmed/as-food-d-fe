@@ -9,14 +9,11 @@ import {
   ModalContent,
   ModalHeader,
 } from "semantic-ui-react";
-import {
-  mealNameOptions,
-  orderTypeOptions,
-} from "../../constant/common.constant";
+import { monthsOptions } from "../../constant/common.constant";
 import { useClient } from "../../hooks/pure/useClient";
-import { cancelReqVSchema } from "../../validations/cancelReq.schema";
+import { billSchema } from "../../validations/bill.schema";
 import AsToast from "../common/AsToast";
-import { AsForm, AsSelect, AsTextArea } from "../common/form";
+import { AsForm, AsInput, AsSelect } from "../common/form";
 
 const AddBillModal = ({ onClose, open = true }) => {
   const client = useClient();
@@ -27,11 +24,10 @@ const AddBillModal = ({ onClose, open = true }) => {
     handleSubmit,
   } = useForm({
     defaultValues: {
-      mealName: "",
-      mealType: "",
-      reason: "",
+      monthName: "",
+      price: 200,
     },
-    resolver: joiResolver(cancelReqVSchema),
+    resolver: joiResolver(billSchema),
   });
 
   const { mutate: addUserMutate, isPending } = useMutation({
@@ -52,7 +48,9 @@ const AddBillModal = ({ onClose, open = true }) => {
   });
 
   const handleUserSubmit = (data) => {
-    addUserMutate(data);
+    console.log(data);
+
+    // addUserMutate(data);
   };
   return (
     <Modal
@@ -62,47 +60,23 @@ const AddBillModal = ({ onClose, open = true }) => {
       open={Boolean(open)}
       onClose={onClose}
     >
-      <ModalHeader>You want to create cancel request?</ModalHeader>
+      <ModalHeader>You want to create new bill?</ModalHeader>
       <ModalContent>
-        <h5 className="mb-0" style={{ color: "blue" }}>
-          অর্ডার বাতিল করার সময়সূচি
-        </h5>
-        <h5 className="mb-1 mt-1">সকাল: সকাল ৭:00 টা</h5>
-        <h5 className="mb-1 mt-1">দুপুর: সকাল ১০:০০ টা</h5>
-        <h5 className="mb-1 mt-1">রাত: বিকেল ২:০০ টা</h5>
-        <span
-          className="c-red fw-bold mb-4 d-flex"
-          style={{ backgroundColor: "#7767130" }}
-        >
-          বিঃদ্রঃ: উপরোক্ত সময়ের মধ্যে Cancel Request পাঠালে টাকা ফেরত দেওয়া হবে
-          অন্যথায় খাবার বিক্রি হলে টাকা ফেরত দেওয়া হবে।
-        </span>
-
         <AsForm control={control} errors={errors} size="large">
           <AsSelect
-            name="mealType"
+            name="monthName"
             required
-            label="Meal Type"
-            placeholder="Select Meal Type"
-            options={orderTypeOptions || []}
+            label="Month Name"
+            placeholder="Select Month"
+            options={monthsOptions || []}
             mobile={16}
             computer={16}
           />
-          <AsSelect
-            name="mealName"
+          <AsInput
+            name="price"
             required
-            label="Meal Name"
-            placeholder="Select Meal Name"
-            options={mealNameOptions || []}
-            mobile={16}
-            computer={16}
-          />
-          <AsTextArea
-            maxLength={100}
-            name="reason"
-            required
-            label="Cancel Reason"
-            placeholder="Please provide a valid reason"
+            label="Price"
+            placeholder="Enter bill price"
             mobile={16}
             computer={16}
           />
@@ -113,13 +87,12 @@ const AddBillModal = ({ onClose, open = true }) => {
           Cancel
         </Button>
         <Button
-          className="mt-5"
           loading={isPending}
           disabled={isPending}
           onClick={handleSubmit(handleUserSubmit)}
           primary
         >
-          Submit
+          Create
         </Button>
       </ModalActions>
     </Modal>

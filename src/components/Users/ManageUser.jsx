@@ -27,7 +27,6 @@ const ManageUser = () => {
       address: "",
       area: "",
       role: "",
-      userId: "",
     },
     resolver: joiResolver(id ? updateUserSchema : userSchema),
   });
@@ -39,14 +38,13 @@ const ManageUser = () => {
   });
   useEffect(() => {
     if (data && id) {
-      const { name, email, area, address, role, userId, mobile } = data;
+      const { name, email, area, address, role, mobile } = data;
       reset({
         name,
         email,
         address,
         area,
         role,
-        userId,
         mobile,
       });
     }
@@ -155,14 +153,6 @@ const ManageUser = () => {
               ]}
             />
 
-            <AsInput
-              maxLength={4}
-              name="userId"
-              required
-              label="User Id"
-              placeholder="Enter User Id"
-              computer={8}
-            />
             <AsSelect
               name="role"
               required

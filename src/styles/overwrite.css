@@ -1,6 +1,6 @@
 .ui.form .field {
   position: relative;
-  margin: 0px 0px 1rem 0px !important;
+  margin: 0px 0px 1.3rem 0px !important;
 }
 
 .ui.form .field .prompt.label {
@@ -44,7 +44,7 @@
 }
 .ui.form .column {
   padding: 0px 14px !important;
-  margin-bottom: 14px !important;
+  /* margin-bottom: 14px !important; */
 }
 
 .ui.modal {
