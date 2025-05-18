@@ -101,6 +101,7 @@ const AddBillModal = ({ onClose, open = true }) => {
             options={monthsOptions || []}
             mobile={16}
             computer={16}
+            disabled={monthName}
           />
           <AsInput
             name="price"

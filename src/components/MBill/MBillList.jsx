@@ -1,14 +1,14 @@
 import avatar from "@/assets/user-avatar.png";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { BiBlock } from "react-icons/bi";
-import { FiEdit2, FiTrash2 } from "react-icons/fi";
+import { FiEdit2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
   Image,
   Label,
   Popup,
+  Select,
   Table,
   TableBody,
   TableCell,
@@ -17,17 +17,17 @@ import {
   TableRow,
 } from "semantic-ui-react";
 import { useGetQueryDataList } from "../../api/query.api";
-import { userRoleColor } from "../../constant/common.constant";
+import { areaListOptions, monthsOptions } from "../../constant/common.constant";
 import { useClient } from "../../hooks/pure/useClient";
 import { useDisclosure } from "../../hooks/pure/useDisclosure";
-import AsToast from "../common/AsToast";
+import { getFormattedDateTime } from "../../utils/helper";
 import CustomPagination from "../common/CustomPagination";
 import DeleteModal from "../common/DeleteModal";
 import NoDataAvailable from "../common/NoDataAvailable";
 import SearchBar from "../common/SearchBar";
 import TableLoader from "../common/TableLoader";
 
-const UsersList = () => {
+const MBillList = () => {
   const client = useClient();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -36,8 +36,8 @@ const UsersList = () => {
     limit: 20,
     searchTerm: "",
   });
-  const { data: usersList, isFetching } = useGetQueryDataList(
-    "user/all",
+  const { data: mBillList, isFetching } = useGetQueryDataList(
+    "mbill",
     defaultQuery
   );
   const { isOpen, onClose, setCustom } = useDisclosure();
@@ -47,45 +47,45 @@ const UsersList = () => {
     // setCustom: setDeleteCustom,
   } = useDisclosure();
 
-  const { mutate: deleteUserMutate, isPending } = useMutation({
-    mutationFn: (id) => client(`user/${id}`, { method: "DELETE" }),
-    onSuccess: () => {
-      queryClient.refetchQueries({
-        queryKey: ["user/all-list"],
-        type: "active",
-      });
-      onDeleteClose();
-      AsToast.error(
-        <div className="errorToast">
-          <FiTrash2 /> &nbsp;
-          <span>User Deleted!</span>
-        </div>
-      );
-    },
-  });
-  const { mutate: updateStatusMutation, isPending: isStatusPending } =
-    useMutation({
-      mutationFn: (id) => client(`user/${id}/status`, { method: "PATCH" }),
-      onSuccess: () => {
-        queryClient.refetchQueries({
-          queryKey: ["user/all-list"],
-          type: "active",
-        });
-        onClose();
-        AsToast.success(
-          <div className="errorToast">
-            <FiTrash2 /> &nbsp;
-            <span>User Status Updated</span>
-          </div>
-        );
-      },
-    });
+  // const { mutate: deleteUserMutate, isPending } = useMutation({
+  //   mutationFn: (id) => client(`user/${id}`, { method: "DELETE" }),
+  //   onSuccess: () => {
+  //     queryClient.refetchQueries({
+  //       queryKey: ["user/all-list"],
+  //       type: "active",
+  //     });
+  //     onDeleteClose();
+  //     AsToast.error(
+  //       <div className="errorToast">
+  //         <FiTrash2 /> &nbsp;
+  //         <span>User Deleted!</span>
+  //       </div>
+  //     );
+  //   },
+  // });
+  // const { mutate: updateStatusMutation, isPending: isStatusPending } =
+  //   useMutation({
+  //     mutationFn: (id) => client(`user/${id}/status`, { method: "PATCH" }),
+  //     onSuccess: () => {
+  //       queryClient.refetchQueries({
+  //         queryKey: ["user/all-list"],
+  //         type: "active",
+  //       });
+  //       onClose();
+  //       AsToast.success(
+  //         <div className="errorToast">
+  //           <FiTrash2 /> &nbsp;
+  //           <span>User Status Updated</span>
+  //         </div>
+  //       );
+  //     },
+  //   });
 
   const handleDelete = (id) => {
-    deleteUserMutate(id);
+    // deleteUserMutate(id);
   };
   const handleBlockUser = ({ id }) => {
-    updateStatusMutation(id);
+    // updateStatusMutation(id);
   };
   const { isActive } = isOpen;
 
@@ -99,7 +99,7 @@ const UsersList = () => {
         onClose={onClose}
         confirmText={`${isActive ? "Block" : "Unlock"}`}
         open={isOpen}
-        isLoading={isStatusPending}
+        // isLoading={isStatusPending}
         onConfirm={() => handleBlockUser(isOpen)}
         confirm={!isActive}
       />
@@ -109,13 +109,13 @@ const UsersList = () => {
         onClose={onDeleteClose}
         confirmText="Delete"
         open={isDeleteOpen}
-        isLoading={isPending}
+        // isLoading={isPending}
         onConfirm={() => handleDelete(isDeleteOpen)}
       />
 
       <div className="pageHeader">
         <div className="title">
-          <h5>Users ({usersList?.meta?.total || 0})</h5>
+          <h5>Bills ({mBillList?.meta?.total || 0})</h5>
         </div>
         <div className="pageAction">
           <SearchBar
@@ -124,6 +124,24 @@ const UsersList = () => {
             onSuccess={(e) =>
               setDefaultQuery((prev) => ({ ...prev, searchTerm: e, page: 1 }))
             }
+          />
+          <Select
+            // className="orderFilterDropdown"
+            clearable
+            options={monthsOptions}
+            onChange={(e, { value }) =>
+              setDefaultQuery((prev) => ({ ...prev, monthName: value }))
+            }
+            placeholder="Select Month"
+          />
+          <Select
+            // className="orderFilterDropdown"
+            clearable
+            options={areaListOptions}
+            onChange={(e, { value }) =>
+              setDefaultQuery((prev) => ({ ...prev, area: value }))
+            }
+            placeholder="Select Area"
           />
           <Button onClick={() => navigate("add")} primary>
             Add User
@@ -136,19 +154,19 @@ const UsersList = () => {
             <TableHeaderCell>#</TableHeaderCell>
             <TableHeaderCell>Name</TableHeaderCell>
             <TableHeaderCell>User Id</TableHeaderCell>
-            <TableHeaderCell>Role</TableHeaderCell>
-            <TableHeaderCell>Email</TableHeaderCell>
             <TableHeaderCell>Mobile</TableHeaderCell>
+            <TableHeaderCell>Month</TableHeaderCell>
+            <TableHeaderCell>Price</TableHeaderCell>
             <TableHeaderCell>Area</TableHeaderCell>
             <TableHeaderCell>Address</TableHeaderCell>
-            <TableHeaderCell>Status</TableHeaderCell>
+            <TableHeaderCell>Created At</TableHeaderCell>
             <TableHeaderCell>Actions</TableHeaderCell>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {usersList?.result?.length > 0 && !isFetching ? (
-            usersList?.result?.map((user, index) => (
-              <TableRow key={user?._id}>
+          {mBillList?.result?.length > 0 && !isFetching ? (
+            mBillList?.result?.map((bill, index) => (
+              <TableRow key={bill?._id}>
                 <TableCell>
                   {(defaultQuery?.page - 1) * defaultQuery?.limit + index + 1}
                 </TableCell>
@@ -156,42 +174,26 @@ const UsersList = () => {
                   <div className="d-flex aic">
                     <Image
                       className="b-radius-50 headerAvatar"
-                      src={user?.imageUrl || avatar}
+                      src={bill?.imageUrl || avatar}
                     />
                     <span className="t-capitalize ml-2">
-                      {user?.name}{" "}
+                      {bill?.user?.name}{" "}
                       <Label
                         circular
-                        color={user?.isActive ? "green" : "red"}
+                        color={bill?.user?.isActive ? "green" : "red"}
                         empty
                         size="mini"
                       />
                     </span>
                   </div>
                 </TableCell>
-                <TableCell>{user?.userId}</TableCell>
-                <TableCell>
-                  <Label
-                    size="medium"
-                    color={userRoleColor[user?.role]}
-                    className="labelsStyle"
-                  >
-                    {user?.role}
-                  </Label>
-                </TableCell>
-                <TableCell>{user?.email || "-"}</TableCell>
-                <TableCell>{user?.mobile}</TableCell>
-                <TableCell>{user?.area}</TableCell>
-                <TableCell>{user?.address}</TableCell>
-                <TableCell>
-                  <Label
-                    size="tiny"
-                    color={user?.isActive ? "green" : "red"}
-                    className="labelsStyle"
-                  >
-                    {user?.isActive ? "Active" : "Blocked"}
-                  </Label>
-                </TableCell>
+                <TableCell>{bill?.userId}</TableCell>
+                <TableCell>{bill?.mobile || ""}</TableCell>
+                <TableCell>{bill?.monthName || "-"}</TableCell>
+                <TableCell>{bill?.bill?.price || ""}</TableCell>
+                <TableCell className="t-capitalize">{bill?.area}</TableCell>
+                <TableCell>{bill?.user?.address}</TableCell>
+                <TableCell>{getFormattedDateTime(bill?.createdAt)}</TableCell>
                 <TableCell className="d-flex">
                   <Popup
                     content="Edit User"
@@ -199,44 +201,12 @@ const UsersList = () => {
                     trigger={
                       <Button
                         icon
-                        onClick={() => navigate(`edit/${user?._id}`)}
+                        // onClick={() => navigate(`edit/${user?._id}`)}
                       >
                         <FiEdit2 />
                       </Button>
                     }
                   />
-                  <Popup
-                    content="Block User"
-                    position="top center"
-                    trigger={
-                      <Button
-                        id="userBlockButton"
-                        icon
-                        onClick={() =>
-                          setCustom({ id: user?._id, isActive: user?.isActive })
-                        }
-                      >
-                        <BiBlock />
-                      </Button>
-                    }
-                  />
-                  {/* <Popup
-                    content="Delete"
-                    position="top center"
-                    trigger={
-                      <Button
-                        // color="red"
-                        // disabled
-                        // disabled={
-                        //   user?.role === "admin" || user?.role === "manager"
-                        // }
-                        icon
-                        onClick={() => setDeleteCustom(user?._id)}
-                      >
-                        <MdDelete />
-                      </Button>
-                    }
-                  /> */}
                 </TableCell>
               </TableRow>
             ))
@@ -255,7 +225,7 @@ const UsersList = () => {
         </TableBody>
       </Table>
       <CustomPagination
-        totalPages={usersList?.meta?.totalPage || 0}
+        totalPages={mBillList?.meta?.totalPage || 0}
         activePage={defaultQuery?.page || 0}
         onPageChange={(value) =>
           setDefaultQuery((prev) => ({ ...prev, page: value }))
@@ -265,4 +235,4 @@ const UsersList = () => {
   );
 };
 
-export default UsersList;
+export default MBillList;

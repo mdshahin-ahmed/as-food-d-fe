@@ -623,6 +623,14 @@ body {
   padding-bottom: 18px;
 }
 
+.pageHeader .pageAction {
+  display: flex;
+  align-items: center;
+  position: relative;
+  grid-gap: 10px;
+  gap: 10px;
+}
+
 .noDataWrap img {
   width: 370px;
   height: 350px;

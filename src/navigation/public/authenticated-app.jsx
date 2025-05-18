@@ -14,6 +14,7 @@ import AuthorizedRoute from "../AuthorizedRoute";
 import AnalyticsPage from "../../components/Analytics/AnalyticsPage";
 import WithdrawReqList from "../../components/WithdrawReq/WithdrawReqList";
 import BillListPage from "../../components/pages/Bill/BillListPage";
+import MBillList from "../../components/MBill/MBillList";
 
 function AuthenticatedApp() {
   return (
@@ -32,6 +33,16 @@ function AuthenticatedApp() {
           <AuthorizedRoute permissions={["admin"]}>
             <AppLayout>
               <BillListPage />
+            </AppLayout>
+          </AuthorizedRoute>
+        }
+      />
+      <Route
+        path="/pending-bills"
+        element={
+          <AuthorizedRoute permissions={["admin", "employee", "user"]}>
+            <AppLayout>
+              <MBillList />
             </AppLayout>
           </AuthorizedRoute>
         }

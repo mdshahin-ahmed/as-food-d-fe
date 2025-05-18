@@ -29,8 +29,8 @@ const routeList = [
     permissions: ["admin"],
   },
   {
-    content: "Meals",
-    pathname: "meals",
+    content: "Bills",
+    pathname: "pending-bills",
     src: GiHotMeal,
     permissions: ["user", "admin", "manager"],
   },

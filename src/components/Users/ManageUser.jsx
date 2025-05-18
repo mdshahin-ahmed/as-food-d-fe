@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "semantic-ui-react";
-import { RoleOptions } from "../../constant/common.constant";
+import { areaListOptions, RoleOptions } from "../../constant/common.constant";
 import { useClient } from "../../hooks/pure/useClient";
 import { updateUserSchema, userSchema } from "../../validations/user.schema";
 import AsToast from "../common/AsToast";
@@ -138,18 +138,7 @@ const ManageUser = () => {
               required
               label="Area"
               placeholder="Select area"
-              options={[
-                {
-                  key: "karatiya",
-                  text: "Karatiya",
-                  value: "karatiya",
-                },
-                {
-                  key: "tangail",
-                  text: "Tangail",
-                  value: "tangail",
-                },
-              ]}
+              options={areaListOptions}
             />
 
             <AsSelect

@@ -63,6 +63,19 @@ export const userRoleColor = {
   user: "red",
 };
 
+export const areaListOptions = [
+  {
+    key: "karatiya",
+    text: "Karatiya",
+    value: "karatiya",
+  },
+  {
+    key: "tangail",
+    text: "Tangail",
+    value: "tangail",
+  },
+];
+
 export const adminOrderStatus = [
   {
     key: "delivered",
