@@ -6,9 +6,10 @@ import Profile from "../../components/Profile/Profile";
 import AppLayout from "../../layouts/AppLayout";
 import AuthorizedRoute from "../AuthorizedRoute";
 import BillListPage from "../../components/Bill/BillListPage";
-import MBillList from "../../components/MBill/MBillList";
 import UsersList from "../../components/Users/UsersList";
 import ManageUser from "../../components/Users/ManageUser";
+import MBillPaidList from "../../components/MBillPaid/MBillPaidList";
+import MBillPendingList from "../../components/MBillPending/MBillPendingList";
 
 function AuthenticatedApp() {
   return (
@@ -31,12 +32,23 @@ function AuthenticatedApp() {
           </AuthorizedRoute>
         }
       />
+
       <Route
         path="/pending-bills"
         element={
           <AuthorizedRoute permissions={["admin", "employee", "user"]}>
             <AppLayout>
-              <MBillList />
+              <MBillPendingList />
+            </AppLayout>
+          </AuthorizedRoute>
+        }
+      />
+      <Route
+        path="/paid-bills"
+        element={
+          <AuthorizedRoute permissions={["admin", "employee"]}>
+            <AppLayout>
+              <MBillPaidList />
             </AppLayout>
           </AuthorizedRoute>
         }

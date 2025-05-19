@@ -32,7 +32,7 @@ import NoDataAvailable from "../common/NoDataAvailable";
 import SearchBar from "../common/SearchBar";
 import TableLoader from "../common/TableLoader";
 
-const MBillList = () => {
+const MBillPendingList = () => {
   const client = useClient();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -40,6 +40,7 @@ const MBillList = () => {
     page: 1,
     limit: 20,
     searchTerm: "",
+    status: "pending",
   });
   const { data: mBillList, isFetching } = useGetQueryDataList(
     "mbill",
@@ -49,7 +50,7 @@ const MBillList = () => {
 
   const { mutate: paidMutate, isPending } = useMutation({
     mutationFn: ({ id, status }) =>
-      client(`mbill/${id}/paid`, { data: status, method: "PATCH" }),
+      client(`mbill/${id}/paid`, { data: { status: status }, method: "PATCH" }),
     onSuccess: () => {
       queryClient.refetchQueries({
         queryKey: ["mbill-list"],
@@ -85,7 +86,7 @@ const MBillList = () => {
 
       <div className="pageHeader">
         <div className="title">
-          <h5>Bills ({mBillList?.meta?.total || 0})</h5>
+          <h5>Pending Bills ({mBillList?.meta?.total || 0})</h5>
         </div>
         <div className="pageAction">
           <SearchBar
@@ -185,6 +186,7 @@ const MBillList = () => {
                         className="billActionsDropdown"
                         placeholder="Status"
                         clearable
+                        disabled={bill?.status === "paid"}
                         options={[
                           {
                             key: "paid",
@@ -226,4 +228,4 @@ const MBillList = () => {
   );
 };
 
-export default MBillList;
+export default MBillPendingList;

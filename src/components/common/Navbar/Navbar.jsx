@@ -59,12 +59,6 @@ const routeList = [
     src: SiGoogleanalytics,
     permissions: ["admin"],
   },
-  {
-    content: "Withdraw",
-    pathname: "withdraw",
-    src: BiMoneyWithdraw,
-    permissions: ["user", "admin", "manager"],
-  },
 
   {
     content: "Profile",
