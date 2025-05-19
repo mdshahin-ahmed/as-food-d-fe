@@ -62,6 +62,12 @@ export const userRoleColor = {
   employee: "yellow",
   user: "red",
 };
+export const millStatusColor = {
+  paid: "green",
+  pending: "yellow",
+  approve: "green",
+  cancel: "red",
+};
 
 export const areaListOptions = [
   {

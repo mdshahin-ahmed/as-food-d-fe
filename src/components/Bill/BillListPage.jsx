@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { FiEdit, FiEdit2 } from "react-icons/fi";
+import { FiEdit2 } from "react-icons/fi";
 import {
   Button,
   Popup,
@@ -11,14 +11,14 @@ import {
   TableHeaderCell,
   TableRow,
 } from "semantic-ui-react";
-import { useAuth } from "../../../context/app/useAuth";
-import { useClient } from "../../../hooks/pure/useClient";
-import { useDisclosure } from "../../../hooks/pure/useDisclosure";
-import { getFormattedDateTime } from "../../../utils/helper";
-import AddBillModal from "../../Bill/AddBillModal";
-import CustomPagination from "../../common/CustomPagination";
-import NoDataAvailable from "../../common/NoDataAvailable";
-import TableLoader from "../../common/TableLoader";
+import { useAuth } from "../../context/app/useAuth";
+import { useClient } from "../../hooks/pure/useClient";
+import { useDisclosure } from "../../hooks/pure/useDisclosure";
+import { getFormattedDateTime } from "../../utils/helper";
+import CustomPagination from "../common/CustomPagination";
+import NoDataAvailable from "../common/NoDataAvailable";
+import TableLoader from "../common/TableLoader";
+import AddBillModal from "./AddBillModal";
 
 const BillListPage = () => {
   const { user } = useAuth();

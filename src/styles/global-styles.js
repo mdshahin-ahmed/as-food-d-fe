@@ -6,5 +6,5 @@ import "./header.css";
 import "./appBody.css";
 import "./profile.css";
 import "./user.css";
-import "./order.css";
+import "./bill.css";
 import "./analytics.css";

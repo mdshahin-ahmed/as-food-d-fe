@@ -1,10 +1,11 @@
 import avatar from "@/assets/user-avatar.png";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { FiEdit2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
+  Dropdown,
   Image,
   Label,
   Popup,
@@ -17,7 +18,11 @@ import {
   TableRow,
 } from "semantic-ui-react";
 import { useGetQueryDataList } from "../../api/query.api";
-import { areaListOptions, monthsOptions } from "../../constant/common.constant";
+import {
+  areaListOptions,
+  millStatusColor,
+  monthsOptions,
+} from "../../constant/common.constant";
 import { useClient } from "../../hooks/pure/useClient";
 import { useDisclosure } from "../../hooks/pure/useDisclosure";
 import { getFormattedDateTime } from "../../utils/helper";
@@ -26,6 +31,8 @@ import DeleteModal from "../common/DeleteModal";
 import NoDataAvailable from "../common/NoDataAvailable";
 import SearchBar from "../common/SearchBar";
 import TableLoader from "../common/TableLoader";
+import { AiOutlineCheckCircle } from "react-icons/ai";
+import AsToast from "../common/AsToast";
 
 const MBillList = () => {
   const client = useClient();
@@ -41,76 +48,41 @@ const MBillList = () => {
     defaultQuery
   );
   const { isOpen, onClose, setCustom } = useDisclosure();
-  const {
-    isOpen: isDeleteOpen,
-    onClose: onDeleteClose,
-    // setCustom: setDeleteCustom,
-  } = useDisclosure();
 
-  // const { mutate: deleteUserMutate, isPending } = useMutation({
-  //   mutationFn: (id) => client(`user/${id}`, { method: "DELETE" }),
-  //   onSuccess: () => {
-  //     queryClient.refetchQueries({
-  //       queryKey: ["user/all-list"],
-  //       type: "active",
-  //     });
-  //     onDeleteClose();
-  //     AsToast.error(
-  //       <div className="errorToast">
-  //         <FiTrash2 /> &nbsp;
-  //         <span>User Deleted!</span>
-  //       </div>
-  //     );
-  //   },
-  // });
-  // const { mutate: updateStatusMutation, isPending: isStatusPending } =
-  //   useMutation({
-  //     mutationFn: (id) => client(`user/${id}/status`, { method: "PATCH" }),
-  //     onSuccess: () => {
-  //       queryClient.refetchQueries({
-  //         queryKey: ["user/all-list"],
-  //         type: "active",
-  //       });
-  //       onClose();
-  //       AsToast.success(
-  //         <div className="errorToast">
-  //           <FiTrash2 /> &nbsp;
-  //           <span>User Status Updated</span>
-  //         </div>
-  //       );
-  //     },
-  //   });
+  const { mutate: paidMutate, isPending } = useMutation({
+    mutationFn: ({ id, status }) =>
+      client(`mbill/${id}/paid`, { data: status, method: "PATCH" }),
+    onSuccess: () => {
+      queryClient.refetchQueries({
+        queryKey: ["mbill-list"],
+        type: "active",
+      });
+      onClose();
 
-  const handleDelete = (id) => {
-    // deleteUserMutate(id);
+      AsToast.success(
+        <div className="errorToast">
+          <AiOutlineCheckCircle /> &nbsp;
+          <span>Bill Paid</span>
+        </div>
+      );
+    },
+  });
+
+  const handlePaid = (data) => {
+    paidMutate(data);
   };
-  const handleBlockUser = ({ id }) => {
-    // updateStatusMutation(id);
-  };
-  const { isActive } = isOpen;
 
   return (
     <div className="previewLayout">
       <DeleteModal
-        modalHeader={`${isActive ? "Block" : "Unblock"} User`}
-        modalContent={`Are you sure you want to ${
-          isActive ? "block" : "unblock"
-        }  user?`}
+        modalHeader="Paid bill"
+        modalContent="Are you sure you want to paid bill?"
         onClose={onClose}
-        confirmText={`${isActive ? "Block" : "Unlock"}`}
-        open={isOpen}
-        // isLoading={isStatusPending}
-        onConfirm={() => handleBlockUser(isOpen)}
-        confirm={!isActive}
-      />
-      <DeleteModal
-        modalHeader="Delete User"
-        modalContent="Are you sure you want to delete user?"
-        onClose={onDeleteClose}
-        confirmText="Delete"
-        open={isDeleteOpen}
-        // isLoading={isPending}
-        onConfirm={() => handleDelete(isDeleteOpen)}
+        confirmText="Paid"
+        open={isOpen?.status}
+        isLoading={isPending}
+        onConfirm={() => handlePaid(isOpen)}
+        confirm
       />
 
       <div className="pageHeader">
@@ -159,8 +131,11 @@ const MBillList = () => {
             <TableHeaderCell>Price</TableHeaderCell>
             <TableHeaderCell>Area</TableHeaderCell>
             <TableHeaderCell>Address</TableHeaderCell>
+            <TableHeaderCell>Status</TableHeaderCell>
             <TableHeaderCell>Created At</TableHeaderCell>
-            <TableHeaderCell>Actions</TableHeaderCell>
+            <TableHeaderCell className="billActionsHeader">
+              Actions
+            </TableHeaderCell>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -193,18 +168,36 @@ const MBillList = () => {
                 <TableCell>{bill?.bill?.price || ""}</TableCell>
                 <TableCell className="t-capitalize">{bill?.area}</TableCell>
                 <TableCell>{bill?.user?.address}</TableCell>
+                <TableCell>
+                  <Label
+                    size="tiny"
+                    color={millStatusColor[bill?.status]}
+                    className="labelsStyle"
+                  >
+                    {bill?.status}
+                  </Label>
+                </TableCell>
                 <TableCell>{getFormattedDateTime(bill?.createdAt)}</TableCell>
                 <TableCell className="d-flex">
                   <Popup
                     content="Edit User"
                     position="top center"
                     trigger={
-                      <Button
-                        icon
-                        // onClick={() => navigate(`edit/${user?._id}`)}
-                      >
-                        <FiEdit2 />
-                      </Button>
+                      <Select
+                        className="billActionsDropdown"
+                        placeholder="Status"
+                        clearable
+                        options={[
+                          {
+                            key: "paid",
+                            value: "paid",
+                            text: "Paid",
+                          },
+                        ]}
+                        onChange={(e, { value }) =>
+                          setCustom({ status: value, id: bill?._id })
+                        }
+                      />
                     }
                   />
                 </TableCell>
@@ -212,10 +205,10 @@ const MBillList = () => {
             ))
           ) : (
             <>
-              {isFetching && <TableLoader columns={10} />}
+              {isFetching && <TableLoader columns={11} />}
               {!isFetching && (
                 <TableRow>
-                  <TableCell colSpan="10">
+                  <TableCell colSpan="11">
                     <NoDataAvailable />
                   </TableCell>
                 </TableRow>
