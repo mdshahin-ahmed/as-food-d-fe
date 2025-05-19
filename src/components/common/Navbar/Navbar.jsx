@@ -29,10 +29,16 @@ const routeList = [
     permissions: ["admin"],
   },
   {
-    content: "Bills",
+    content: "Pending Bills",
     pathname: "pending-bills",
     src: GiHotMeal,
-    permissions: ["user", "admin", "manager"],
+    permissions: ["user", "admin", "employee"],
+  },
+  {
+    content: "Paid Bills",
+    pathname: "paid-bills",
+    src: FaCartArrowDown,
+    permissions: ["admin", "employee"],
   },
   {
     content: "Users",
@@ -40,36 +46,7 @@ const routeList = [
     src: FaUsers,
     permissions: ["admin"],
   },
-  {
-    content: "Order",
-    pathname: "orders",
-    src: FaCartArrowDown,
-    permissions: ["user", "admin", "manager"],
-  },
-  {
-    content: "All Order",
-    pathname: "all-order",
-    src: FaCartArrowDown,
-    permissions: ["admin", "manager", "user"],
-  },
-  {
-    content: "All Cancel Request",
-    pathname: "cancel-req",
-    src: TbDevicesCancel,
-    permissions: ["admin", "user"],
-  },
-  {
-    content: "Balance",
-    pathname: "balances",
-    src: FaBangladeshiTakaSign,
-    permissions: ["admin", "user"],
-  },
-  {
-    content: "Statements",
-    pathname: "statements",
-    src: FaFileInvoiceDollar,
-    permissions: ["admin", "user"],
-  },
+
   // {
   //   content: "Expense",
   //   pathname: "expense",

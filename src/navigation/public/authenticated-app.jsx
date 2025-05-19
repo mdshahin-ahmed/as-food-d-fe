@@ -2,13 +2,13 @@ import { Route, Routes } from "react-router-dom";
 import Home from "../../components/Home/Home";
 
 import AnalyticsPage from "../../components/Analytics/AnalyticsPage";
-import MBillList from "../../components/MBill/MBillList";
 import Profile from "../../components/Profile/Profile";
-import ManageUser from "../../components/Users/ManageUser";
-import UsersList from "../../components/Users/UsersList";
-import BillListPage from "../../components/pages/Bill/BillListPage";
 import AppLayout from "../../layouts/AppLayout";
 import AuthorizedRoute from "../AuthorizedRoute";
+import BillListPage from "../../components/Bill/BillListPage";
+import MBillList from "../../components/MBill/MBillList";
+import UsersList from "../../components/Users/UsersList";
+import ManageUser from "../../components/Users/ManageUser";
 
 function AuthenticatedApp() {
   return (
