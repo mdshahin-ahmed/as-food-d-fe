@@ -114,9 +114,6 @@ const MBillPendingList = () => {
             }
             placeholder="Select Area"
           />
-          <Button onClick={() => navigate("add")} primary>
-            Add User
-          </Button>
         </div>
       </div>
       <Table basic>
@@ -179,12 +176,12 @@ const MBillPendingList = () => {
                 <TableCell>{getFormattedDateTime(bill?.createdAt)}</TableCell>
                 <TableCell className="d-flex">
                   <Popup
-                    content="Edit User"
+                    content="Pay Bill"
                     position="top center"
                     trigger={
                       <Select
                         className="billActionsDropdown"
-                        placeholder="Status"
+                        placeholder="Pay"
                         clearable
                         disabled={bill?.status === "paid"}
                         options={[

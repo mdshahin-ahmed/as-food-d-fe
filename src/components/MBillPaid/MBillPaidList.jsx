@@ -4,10 +4,9 @@ import { useState } from "react";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import {
-  Button,
+  Checkbox,
   Image,
   Label,
-  Popup,
   Select,
   Table,
   TableBody,
@@ -35,7 +34,6 @@ import TableLoader from "../common/TableLoader";
 const MBillPaidList = () => {
   const client = useClient();
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const [defaultQuery, setDefaultQuery] = useState({
     page: 1,
     limit: 20,
@@ -50,7 +48,6 @@ const MBillPaidList = () => {
     queryKey: [`employee-list`],
     queryFn: () => client(`user/employee`),
   });
-  console.log(employeeList);
 
   const { isOpen, onClose, setCustom } = useDisclosure();
 
@@ -130,14 +127,17 @@ const MBillPaidList = () => {
             }
             placeholder="Select Area"
           />
-          <Button onClick={() => navigate("add")} primary>
+          {/* <Button onClick={() => navigate("add")} primary>
             Add User
-          </Button>
+          </Button> */}
         </div>
       </div>
       <Table basic>
         <TableHeader>
           <TableRow>
+            <TableHeaderCell>
+              <Checkbox />
+            </TableHeaderCell>
             <TableHeaderCell>#</TableHeaderCell>
             <TableHeaderCell>Name</TableHeaderCell>
             <TableHeaderCell>User Id</TableHeaderCell>
@@ -149,15 +149,15 @@ const MBillPaidList = () => {
             <TableHeaderCell>Address</TableHeaderCell>
             <TableHeaderCell>Status</TableHeaderCell>
             <TableHeaderCell>Created At</TableHeaderCell>
-            <TableHeaderCell className="billActionsHeader">
-              Actions
-            </TableHeaderCell>
           </TableRow>
         </TableHeader>
         <TableBody>
           {mBillList?.result?.length > 0 && !isFetching ? (
             mBillList?.result?.map((bill, index) => (
               <TableRow key={bill?._id}>
+                <TableCell>
+                  <Checkbox />
+                </TableCell>
                 <TableCell>
                   {(defaultQuery?.page - 1) * defaultQuery?.limit + index + 1}
                 </TableCell>
@@ -205,29 +205,6 @@ const MBillPaidList = () => {
                   </Label>
                 </TableCell>
                 <TableCell>{getFormattedDateTime(bill?.createdAt)}</TableCell>
-                <TableCell className="d-flex">
-                  <Popup
-                    content="Edit User"
-                    position="top center"
-                    trigger={
-                      <Select
-                        className="billActionsDropdown"
-                        placeholder="Status"
-                        clearable
-                        options={[
-                          {
-                            key: "paid",
-                            value: "paid",
-                            text: "Paid",
-                          },
-                        ]}
-                        onChange={(e, { value }) =>
-                          setCustom({ status: value, id: bill?._id })
-                        }
-                      />
-                    }
-                  />
-                </TableCell>
               </TableRow>
             ))
           ) : (
