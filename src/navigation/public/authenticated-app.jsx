@@ -99,7 +99,7 @@ function AuthenticatedApp() {
       <Route
         path="/profile"
         element={
-          <AuthorizedRoute permissions={["admin", "user", "manager"]}>
+          <AuthorizedRoute permissions={["admin", "user", "employee"]}>
             <AppLayout>
               <Profile />
             </AppLayout>

@@ -1,5 +1,5 @@
 import avatar from "@/assets/user-avatar.png";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
@@ -46,6 +46,12 @@ const MBillPaidList = () => {
     "mbill",
     defaultQuery
   );
+  const { data: employeeList = [], isFetching: isEmployeeLoading } = useQuery({
+    queryKey: [`employee-list`],
+    queryFn: () => client(`user/employee`),
+  });
+  console.log(employeeList);
+
   const { isOpen, onClose, setCustom } = useDisclosure();
 
   const { mutate: paidMutate, isPending } = useMutation({
@@ -95,6 +101,16 @@ const MBillPaidList = () => {
             onSuccess={(e) =>
               setDefaultQuery((prev) => ({ ...prev, searchTerm: e, page: 1 }))
             }
+          />
+          <Select
+            // className="orderFilterDropdown"
+            clearable
+            isLoading={isEmployeeLoading}
+            options={employeeList}
+            onChange={(e, { value }) =>
+              setDefaultQuery((prev) => ({ ...prev, paidBy: value }))
+            }
+            placeholder="Select Employee"
           />
           <Select
             // className="orderFilterDropdown"
@@ -216,10 +232,10 @@ const MBillPaidList = () => {
             ))
           ) : (
             <>
-              {isFetching && <TableLoader columns={11} />}
+              {isFetching && <TableLoader columns={12} />}
               {!isFetching && (
                 <TableRow>
-                  <TableCell colSpan="11">
+                  <TableCell colSpan="12">
                     <NoDataAvailable />
                   </TableCell>
                 </TableRow>

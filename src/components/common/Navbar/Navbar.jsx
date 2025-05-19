@@ -20,7 +20,7 @@ const routeList = [
     content: "Home",
     pathname: "home",
     src: IoHomeSharp,
-    permissions: ["user", "admin", "manager"],
+    permissions: ["user", "admin", "employee"],
   },
   {
     content: "Manage Bill",
@@ -64,7 +64,7 @@ const routeList = [
     content: "Profile",
     pathname: "profile",
     src: FaUserAlt,
-    permissions: ["user", "admin", "manager"],
+    permissions: ["user", "admin", "employee"],
   },
 ];
 

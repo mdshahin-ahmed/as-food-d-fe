@@ -7,7 +7,6 @@ import { MdOutlineMeetingRoom } from "react-icons/md";
 import { Button, Grid, GridColumn, Image, Popup } from "semantic-ui-react";
 import { useAuth } from "../../context/app/useAuth";
 import { useDisclosure } from "../../hooks/pure/useDisclosure";
-import RechargeModal from "../common/RechargeModal";
 import ChangePasswordModal from "../common/ChangePasswordModal";
 import UpdateProfileModal from "../Users/UpdateProfileModal";
 
@@ -26,7 +25,6 @@ const Profile = () => {
   } = useDisclosure();
   return (
     <>
-      <RechargeModal onClose={onClose} open={isOpen} />
       <ChangePasswordModal onClose={onPassClose} open={isPassOpen} />
       <UpdateProfileModal onClose={onProfileClose} open={isProfileOpen} />
       <div className="profileWrap p-2">
@@ -70,10 +68,7 @@ const Profile = () => {
                 <MdOutlineMeetingRoom />
                 <span className="t-capitalize">{user?.room}</span>
               </h4>
-              <h4 className="mt-0 profileDetails">
-                <FaBangladeshiTakaSign />
-                <span>{user?.balance.toFixed(2) || 0}</span>
-              </h4>
+
               <Button
                 // className="ml-2"
                 primary
