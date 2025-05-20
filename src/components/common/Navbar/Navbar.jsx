@@ -1,16 +1,8 @@
 import logo from "@/assets/logo.png";
-import { BiMoneyWithdraw } from "react-icons/bi";
-import {
-  FaCartArrowDown,
-  FaFileInvoiceDollar,
-  FaUserAlt,
-  FaUsers,
-} from "react-icons/fa";
-import { FaBangladeshiTakaSign } from "react-icons/fa6";
+import { FaCartArrowDown, FaUserAlt, FaUsers } from "react-icons/fa";
 import { GiHotMeal } from "react-icons/gi";
 import { IoHomeSharp } from "react-icons/io5";
 import { SiGoogleanalytics } from "react-icons/si";
-import { TbDevicesCancel } from "react-icons/tb";
 import { NavLink, useLocation } from "react-router-dom";
 import { Image, List, ListItem, Popup } from "semantic-ui-react";
 import { useAuth } from "../../../context/app/useAuth";
@@ -39,6 +31,12 @@ const routeList = [
     pathname: "paid-bills",
     src: FaCartArrowDown,
     permissions: ["admin", "employee"],
+  },
+  {
+    content: "Approved Bills",
+    pathname: "approved-bills",
+    src: FaCartArrowDown,
+    permissions: ["admin"],
   },
   {
     content: "Users",

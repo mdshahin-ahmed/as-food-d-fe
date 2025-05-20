@@ -15,7 +15,7 @@ const AnalyticsPage = () => {
       </div> */}
       <h4 className="mb-0 mt-4 tac">Analytics Of Last 30 Days</h4>
       <div style={{ width: "95vw", height: "550px" }}>
-        <MonthLineChart />
+        {/* <MonthLineChart /> */}
       </div>
       {/* <h4 className="ml-4 mb-0 tac">Analytics By Months</h4>
       <div style={{ width: "95vw", height: "550px" }}>

@@ -39,7 +39,7 @@ export const userRoleColor = {
 export const millStatusColor = {
   paid: "green",
   pending: "yellow",
-  approve: "green",
+  approved: "green",
   cancel: "red",
 };
 

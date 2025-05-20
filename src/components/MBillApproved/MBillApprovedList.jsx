@@ -1,10 +1,7 @@
 import avatar from "@/assets/user-avatar.png";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { AiOutlineCheckCircle } from "react-icons/ai";
 import {
-  Button,
-  Checkbox,
   Image,
   Label,
   Select,
@@ -22,23 +19,19 @@ import {
   monthsOptions,
 } from "../../constant/common.constant";
 import { useClient } from "../../hooks/pure/useClient";
-import { useDisclosure } from "../../hooks/pure/useDisclosure";
 import { getFormattedDateTime } from "../../utils/helper";
-import AsToast from "../common/AsToast";
 import CustomPagination from "../common/CustomPagination";
-import DeleteModal from "../common/DeleteModal";
 import NoDataAvailable from "../common/NoDataAvailable";
 import SearchBar from "../common/SearchBar";
 import TableLoader from "../common/TableLoader";
 
-const MBillPaidList = () => {
+const MBillApprovedList = () => {
   const client = useClient();
-  const queryClient = useQueryClient();
   const [defaultQuery, setDefaultQuery] = useState({
     page: 1,
     limit: 20,
     searchTerm: "",
-    status: "paid",
+    status: "approved",
   });
   const { data: mBillList, isFetching } = useGetQueryDataList(
     "mbill",
@@ -49,92 +42,8 @@ const MBillPaidList = () => {
     queryFn: () => client(`user/employee`),
   });
 
-  const { isOpen, onClose, setCustom } = useDisclosure();
-
-  // start checkbox logic
-
-  const [checkList, setCheckList] = useState([]);
-
-  const currentPageIds = mBillList?.result?.map((bill) => bill._id) || [];
-  const isAllSelected =
-    currentPageIds.length > 0 &&
-    currentPageIds.every((id) => checkList.some((item) => item.id === id));
-
-  const handleToggleAll = () => {
-    const currentBills = mBillList?.result || [];
-    const currentIds = currentBills.map((bill) => bill._id);
-    const allSelected = currentIds.every((id) =>
-      checkList.some((item) => item.id === id)
-    );
-
-    if (allSelected) {
-      setCheckList((prev) =>
-        prev.filter((item) => !currentIds.includes(item.id))
-      );
-    } else {
-      const newEntries = currentBills.map((bill) => ({
-        id: bill._id,
-        price: bill.bill?.price || 0,
-      }));
-      setCheckList((prev) => [
-        ...prev.filter((item) => !currentIds.includes(item.id)),
-        ...newEntries,
-      ]);
-    }
-  };
-
-  const handleCheckboxChange = (bill) => {
-    setCheckList((prev) => {
-      const exists = prev.some((item) => item.id === bill._id);
-      if (exists) {
-        return prev.filter((item) => item.id !== bill._id);
-      }
-      return [...prev, { id: bill._id, price: bill.bill?.price || 0 }];
-    });
-  };
-
-  const totalPrice = checkList.reduce((acc, item) => acc + item.price, 0);
-
-  // end checkbox logic
-
-  const { mutate: approvedMutate, isPending } = useMutation({
-    mutationFn: (data) => client(`mbill/approved`, { data, method: "PATCH" }),
-    onSuccess: () => {
-      queryClient.refetchQueries({
-        queryKey: ["mbill-list"],
-        type: "active",
-      });
-      onClose();
-
-      AsToast.success(
-        <div className="errorToast">
-          <AiOutlineCheckCircle /> &nbsp;
-          <span>Bill Paid</span>
-        </div>
-      );
-
-      setCheckList([]);
-    },
-  });
-
-  const handleApprove = () => {
-    const selectedIds = checkList.map((item) => item.id);
-    approvedMutate({ ids: selectedIds, status: "approved" });
-  };
-
   return (
     <div className="previewLayout">
-      <DeleteModal
-        modalHeader="Approve bill"
-        modalContent="Are you sure you want to approve bill?"
-        onClose={onClose}
-        confirmText="Approve"
-        open={isOpen}
-        isLoading={isPending}
-        onConfirm={() => handleApprove()}
-        confirm
-      />
-
       <div className="pageHeader">
         <div className="title">
           <h5>Paid Bills ({mBillList?.meta?.total || 0})</h5>
@@ -160,6 +69,16 @@ const MBillPaidList = () => {
           <Select
             // className="orderFilterDropdown"
             clearable
+            isLoading={isEmployeeLoading}
+            options={employeeList}
+            onChange={(e, { value }) =>
+              setDefaultQuery((prev) => ({ ...prev, approvedBy: value }))
+            }
+            placeholder="Approved By"
+          />
+          <Select
+            // className="orderFilterDropdown"
+            clearable
             options={monthsOptions}
             onChange={(e, { value }) =>
               setDefaultQuery((prev) => ({ ...prev, monthName: value }))
@@ -181,34 +100,9 @@ const MBillPaidList = () => {
         </div>
       </div>
 
-      <div>
-        {checkList.length > 0 && (
-          <div className="d-flex">
-            <div>
-              <div>
-                Total Selected:{" "}
-                <span style={{ fontWeight: "bolder" }}>
-                  {checkList?.length}
-                </span>
-              </div>
-              <div>
-                Total amount:{" "}
-                <span style={{ fontWeight: "bolder" }}>{totalPrice}</span>
-              </div>
-            </div>
-            <Button primary className="ml-2" onClick={() => setCustom(true)}>
-              Approve
-            </Button>
-          </div>
-        )}
-      </div>
-
       <Table basic>
         <TableHeader>
           <TableRow>
-            <TableHeaderCell>
-              <Checkbox checked={isAllSelected} onChange={handleToggleAll} />
-            </TableHeaderCell>
             <TableHeaderCell>#</TableHeaderCell>
             <TableHeaderCell>Name</TableHeaderCell>
             <TableHeaderCell>User Id</TableHeaderCell>
@@ -216,6 +110,7 @@ const MBillPaidList = () => {
             <TableHeaderCell>Month</TableHeaderCell>
             <TableHeaderCell>Price</TableHeaderCell>
             <TableHeaderCell>Paid By</TableHeaderCell>
+            <TableHeaderCell>Approved By</TableHeaderCell>
             <TableHeaderCell>Area</TableHeaderCell>
             <TableHeaderCell>Address</TableHeaderCell>
             <TableHeaderCell>Status</TableHeaderCell>
@@ -226,12 +121,6 @@ const MBillPaidList = () => {
           {mBillList?.result?.length > 0 && !isFetching ? (
             mBillList?.result?.map((bill, index) => (
               <TableRow key={bill?._id}>
-                <TableCell>
-                  <Checkbox
-                    checked={checkList.some((item) => item.id === bill._id)}
-                    onChange={() => handleCheckboxChange(bill)}
-                  />
-                </TableCell>
                 <TableCell>
                   {(defaultQuery?.page - 1) * defaultQuery?.limit + index + 1}
                 </TableCell>
@@ -264,6 +153,17 @@ const MBillPaidList = () => {
                     />
                     <span className="t-capitalize ml-2">
                       {bill?.paidBy?.name}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="d-flex aic">
+                    <Image
+                      className="b-radius-50 headerAvatar"
+                      src={bill?.approvedBy?.imageUrl || avatar}
+                    />
+                    <span className="t-capitalize ml-2">
+                      {bill?.approvedBy?.name}
                     </span>
                   </div>
                 </TableCell>
@@ -306,4 +206,4 @@ const MBillPaidList = () => {
   );
 };
 
-export default MBillPaidList;
+export default MBillApprovedList;
