@@ -1,14 +1,13 @@
 import logo from "@/assets/logo.png";
-import { FaCartArrowDown, FaUserAlt, FaUsers } from "react-icons/fa";
-import { GiHotMeal } from "react-icons/gi";
+import { FaUserAlt, FaUsers } from "react-icons/fa";
+import { FcApproval } from "react-icons/fc";
 import { IoHomeSharp } from "react-icons/io5";
+import { LiaMoneyBillWaveAltSolid } from "react-icons/lia";
+import { MdCreateNewFolder, MdOutlinePendingActions } from "react-icons/md";
 import { SiGoogleanalytics } from "react-icons/si";
 import { NavLink, useLocation } from "react-router-dom";
 import { Image, List, ListItem, Popup } from "semantic-ui-react";
 import { useAuth } from "../../../context/app/useAuth";
-import { FcApproval } from "react-icons/fc";
-import { MdCreateNewFolder, MdOutlinePendingActions } from "react-icons/md";
-import { LiaMoneyBillWaveAltSolid } from "react-icons/lia";
 
 const routeList = [
   {
