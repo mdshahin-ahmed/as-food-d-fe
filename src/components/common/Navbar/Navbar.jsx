@@ -6,6 +6,9 @@ import { SiGoogleanalytics } from "react-icons/si";
 import { NavLink, useLocation } from "react-router-dom";
 import { Image, List, ListItem, Popup } from "semantic-ui-react";
 import { useAuth } from "../../../context/app/useAuth";
+import { FcApproval } from "react-icons/fc";
+import { MdCreateNewFolder, MdOutlinePendingActions } from "react-icons/md";
+import { LiaMoneyBillWaveAltSolid } from "react-icons/lia";
 
 const routeList = [
   {
@@ -17,25 +20,25 @@ const routeList = [
   {
     content: "Manage Bill",
     pathname: "manage-bill",
-    src: GiHotMeal,
+    src: MdCreateNewFolder,
     permissions: ["admin"],
   },
   {
     content: "Pending Bills",
     pathname: "pending-bills",
-    src: GiHotMeal,
+    src: MdOutlinePendingActions,
     permissions: ["user", "admin", "employee"],
   },
   {
     content: "Paid Bills",
     pathname: "paid-bills",
-    src: FaCartArrowDown,
+    src: LiaMoneyBillWaveAltSolid,
     permissions: ["admin", "employee"],
   },
   {
     content: "Approved Bills",
     pathname: "approved-bills",
-    src: FaCartArrowDown,
+    src: FcApproval,
     permissions: ["admin"],
   },
   {

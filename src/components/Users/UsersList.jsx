@@ -137,6 +137,7 @@ const UsersList = () => {
             <TableHeaderCell>Name</TableHeaderCell>
             <TableHeaderCell>User Id</TableHeaderCell>
             <TableHeaderCell>Role</TableHeaderCell>
+            <TableHeaderCell>Bill</TableHeaderCell>
             <TableHeaderCell>Email</TableHeaderCell>
             <TableHeaderCell>Mobile</TableHeaderCell>
             <TableHeaderCell>Area</TableHeaderCell>
@@ -179,6 +180,7 @@ const UsersList = () => {
                     {user?.role}
                   </Label>
                 </TableCell>
+                <TableCell>{user?.bill || 0}</TableCell>
                 <TableCell>{user?.email || "-"}</TableCell>
                 <TableCell>{user?.mobile}</TableCell>
                 <TableCell>{user?.area}</TableCell>
@@ -242,10 +244,10 @@ const UsersList = () => {
             ))
           ) : (
             <>
-              {isFetching && <TableLoader columns={10} />}
+              {isFetching && <TableLoader columns={11} />}
               {!isFetching && (
                 <TableRow>
-                  <TableCell colSpan="10">
+                  <TableCell colSpan="11">
                     <NoDataAvailable />
                   </TableCell>
                 </TableRow>

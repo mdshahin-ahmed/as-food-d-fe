@@ -1,9 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { FiEdit2 } from "react-icons/fi";
 import {
   Button,
-  Popup,
   Table,
   TableBody,
   TableCell,
@@ -54,12 +52,12 @@ const BillListPage = () => {
             <TableRow>
               <TableHeaderCell>#</TableHeaderCell>
               <TableHeaderCell>Month Name</TableHeaderCell>
-              <TableHeaderCell>Price</TableHeaderCell>
+              {/* <TableHeaderCell>Price</TableHeaderCell> */}
               <TableHeaderCell>Created At</TableHeaderCell>
               <TableHeaderCell>Updated At</TableHeaderCell>
-              {user?.role === "admin" && (
+              {/* {user?.role === "admin" && (
                 <TableHeaderCell>Action</TableHeaderCell>
-              )}
+              )} */}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -72,12 +70,12 @@ const BillListPage = () => {
                   <TableCell className="t-capitalize">
                     {bill?.monthName || "-"}
                   </TableCell>
-                  <TableCell>{bill?.price || "-"}</TableCell>
+                  {/* <TableCell>{bill?.price || "-"}</TableCell> */}
 
                   <TableCell>{getFormattedDateTime(bill?.createdAt)}</TableCell>
                   <TableCell>{getFormattedDateTime(bill?.updatedAt)}</TableCell>
 
-                  <TableCell>
+                  {/* <TableCell>
                     <Popup
                       size="mini"
                       position="top center"
@@ -97,15 +95,15 @@ const BillListPage = () => {
                         </Button>
                       }
                     />
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))
             ) : (
               <>
-                {isBillListFetching && <TableLoader columns={6} />}
+                {isBillListFetching && <TableLoader columns={4} />}
                 {!isBillListFetching && (
                   <TableRow>
-                    <TableCell colSpan={6}>
+                    <TableCell colSpan={4}>
                       <NoDataAvailable />
                     </TableCell>
                   </TableRow>

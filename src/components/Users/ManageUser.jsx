@@ -38,7 +38,7 @@ const ManageUser = () => {
   });
   useEffect(() => {
     if (data && id) {
-      const { name, email, area, address, role, mobile } = data;
+      const { name, email, area, address, role, mobile, bill } = data;
       reset({
         name,
         email,
@@ -46,6 +46,7 @@ const ManageUser = () => {
         area,
         role,
         mobile,
+        bill,
       });
     }
   }, [data]);
@@ -65,6 +66,7 @@ const ManageUser = () => {
   const { mutate: updateMutateUser, isPending: isUpdatePending } = useMutation({
     mutationFn: (data) => client(`user/${id}`, { data: data, method: "PATCH" }),
     onSuccess: () => {
+      navigate("/users");
       AsToast.success(
         <div className="errorToast">
           <AiOutlineCheckCircle /> &nbsp;
@@ -115,6 +117,14 @@ const ManageUser = () => {
               placeholder="Enter a password"
               computer={8}
               type="password"
+            />
+            <AsInput
+              name="bill"
+              required
+              label="Bill amount"
+              placeholder="Enter bill amount"
+              computer={8}
+              type="number"
             />
             <AsInput
               maxLength={100}

@@ -124,7 +124,7 @@ const MBillPendingList = () => {
             <TableHeaderCell>User Id</TableHeaderCell>
             <TableHeaderCell>Mobile</TableHeaderCell>
             <TableHeaderCell>Month</TableHeaderCell>
-            <TableHeaderCell>Price</TableHeaderCell>
+            <TableHeaderCell>Bill</TableHeaderCell>
             <TableHeaderCell>Area</TableHeaderCell>
             <TableHeaderCell>Address</TableHeaderCell>
             <TableHeaderCell>Status</TableHeaderCell>
@@ -161,7 +161,7 @@ const MBillPendingList = () => {
                 <TableCell>{bill?.userId}</TableCell>
                 <TableCell>{bill?.mobile || ""}</TableCell>
                 <TableCell>{bill?.monthName || "-"}</TableCell>
-                <TableCell>{bill?.bill?.price || ""}</TableCell>
+                <TableCell>{bill?.user?.bill || 0}</TableCell>
                 <TableCell className="t-capitalize">{bill?.area}</TableCell>
                 <TableCell>{bill?.user?.address}</TableCell>
                 <TableCell>

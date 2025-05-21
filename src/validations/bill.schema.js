@@ -23,6 +23,4 @@ export const billSchema = Joi.object({
       "string.base": `Month must be a string`,
       "any.only": `Month is required`,
     }),
-
-  price: Joi.number().positive().required().label("Amount"),
 });

@@ -1,5 +1,6 @@
 import { joiResolver } from "@hookform/resolvers/joi";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import {
@@ -13,34 +14,21 @@ import { monthsOptions } from "../../constant/common.constant";
 import { useClient } from "../../hooks/pure/useClient";
 import { billSchema } from "../../validations/bill.schema";
 import AsToast from "../common/AsToast";
-import { AsForm, AsInput, AsSelect } from "../common/form";
-import { useEffect } from "react";
+import { AsForm, AsSelect } from "../common/form";
 
 const AddBillModal = ({ onClose, open = true }) => {
-  const { id, monthName, price } = open;
-
   const client = useClient();
   const queryClient = useQueryClient();
   const {
     control,
     formState: { errors },
     handleSubmit,
-    reset,
   } = useForm({
     defaultValues: {
       monthName: "",
-      price: 200,
     },
     resolver: joiResolver(billSchema),
   });
-
-  useEffect(() => {
-    if (monthName && price) {
-      reset({ monthName, price });
-    } else {
-      reset({ monthName: "", price: 200 });
-    }
-  }, [open]);
 
   const { mutate: addBillMutate, isPending } = useMutation({
     mutationFn: (data) => client("bill", { data: data }),
@@ -58,29 +46,29 @@ const AddBillModal = ({ onClose, open = true }) => {
       );
     },
   });
-  const { mutate: updateBillMutate, isPending: isPendingUpdate } = useMutation({
-    mutationFn: (data) => client(`bill/${id}`, { data: data, method: "PATCH" }),
-    onSuccess: () => {
-      onClose();
-      queryClient.refetchQueries({
-        queryKey: ["bill-list"],
-        type: "active",
-      });
-      AsToast.success(
-        <div className="errorToast">
-          <AiOutlineCheckCircle /> &nbsp;
-          <span>Bill Updated</span>
-        </div>
-      );
-    },
-  });
+  // const { mutate: updateBillMutate, isPending: isPendingUpdate } = useMutation({
+  //   mutationFn: (data) => client(`bill/${id}`, { data: data, method: "PATCH" }),
+  //   onSuccess: () => {
+  //     onClose();
+  //     queryClient.refetchQueries({
+  //       queryKey: ["bill-list"],
+  //       type: "active",
+  //     });
+  //     AsToast.success(
+  //       <div className="errorToast">
+  //         <AiOutlineCheckCircle /> &nbsp;
+  //         <span>Bill Updated</span>
+  //       </div>
+  //     );
+  //   },
+  // });
 
   const handleUserSubmit = (data) => {
-    if (id) {
-      updateBillMutate(data);
-    } else {
-      addBillMutate(data);
-    }
+    // if (id) {
+    //   updateBillMutate(data);
+    // } else {
+    addBillMutate(data);
+    // }
   };
   return (
     <Modal
@@ -101,15 +89,6 @@ const AddBillModal = ({ onClose, open = true }) => {
             options={monthsOptions || []}
             mobile={16}
             computer={16}
-            disabled={monthName}
-          />
-          <AsInput
-            name="price"
-            required
-            label="Price"
-            placeholder="Enter bill price"
-            mobile={16}
-            computer={16}
           />
         </AsForm>
       </ModalContent>
@@ -118,12 +97,12 @@ const AddBillModal = ({ onClose, open = true }) => {
           Cancel
         </Button>
         <Button
-          loading={isPending || isPendingUpdate}
-          disabled={isPending || isPendingUpdate}
+          loading={isPending}
+          disabled={isPending}
           onClick={handleSubmit(handleUserSubmit)}
           primary
         >
-          {id ? "Update" : "Create"}
+          Create
         </Button>
       </ModalActions>
     </Modal>

@@ -108,13 +108,13 @@ const MBillApprovedList = () => {
             <TableHeaderCell>User Id</TableHeaderCell>
             <TableHeaderCell>Mobile</TableHeaderCell>
             <TableHeaderCell>Month</TableHeaderCell>
-            <TableHeaderCell>Price</TableHeaderCell>
+            <TableHeaderCell>Bill</TableHeaderCell>
             <TableHeaderCell>Paid By</TableHeaderCell>
             <TableHeaderCell>Approved By</TableHeaderCell>
             <TableHeaderCell>Area</TableHeaderCell>
             <TableHeaderCell>Address</TableHeaderCell>
             <TableHeaderCell>Status</TableHeaderCell>
-            <TableHeaderCell>Created At</TableHeaderCell>
+            <TableHeaderCell>Approve Time</TableHeaderCell>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -144,7 +144,7 @@ const MBillApprovedList = () => {
                 <TableCell>{bill?.userId}</TableCell>
                 <TableCell>{bill?.mobile || ""}</TableCell>
                 <TableCell>{bill?.monthName || "-"}</TableCell>
-                <TableCell>{bill?.bill?.price || ""}</TableCell>
+                <TableCell>{bill?.user?.bill || 0}</TableCell>
                 <TableCell>
                   <div className="d-flex aic">
                     <Image
@@ -178,7 +178,7 @@ const MBillApprovedList = () => {
                     {bill?.status}
                   </Label>
                 </TableCell>
-                <TableCell>{getFormattedDateTime(bill?.createdAt)}</TableCell>
+                <TableCell>{getFormattedDateTime(bill?.updatedAt)}</TableCell>
               </TableRow>
             ))
           ) : (

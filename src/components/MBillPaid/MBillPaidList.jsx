@@ -74,7 +74,7 @@ const MBillPaidList = () => {
     } else {
       const newEntries = currentBills.map((bill) => ({
         id: bill._id,
-        price: bill.bill?.price || 0,
+        bill: bill.user?.bill || 0,
       }));
       setCheckList((prev) => [
         ...prev.filter((item) => !currentIds.includes(item.id)),
@@ -89,11 +89,11 @@ const MBillPaidList = () => {
       if (exists) {
         return prev.filter((item) => item.id !== bill._id);
       }
-      return [...prev, { id: bill._id, price: bill.bill?.price || 0 }];
+      return [...prev, { id: bill._id, bill: bill.user?.bill || 0 }];
     });
   };
 
-  const totalPrice = checkList.reduce((acc, item) => acc + item.price, 0);
+  const totalBill = checkList.reduce((acc, item) => acc + item.bill, 0);
 
   // end checkbox logic
 
@@ -193,7 +193,7 @@ const MBillPaidList = () => {
               </div>
               <div>
                 Total amount:{" "}
-                <span style={{ fontWeight: "bolder" }}>{totalPrice}</span>
+                <span style={{ fontWeight: "bolder" }}>{totalBill}</span>
               </div>
             </div>
             <Button primary className="ml-2" onClick={() => setCustom(true)}>
@@ -214,12 +214,12 @@ const MBillPaidList = () => {
             <TableHeaderCell>User Id</TableHeaderCell>
             <TableHeaderCell>Mobile</TableHeaderCell>
             <TableHeaderCell>Month</TableHeaderCell>
-            <TableHeaderCell>Price</TableHeaderCell>
-            <TableHeaderCell>Paid By</TableHeaderCell>
+            <TableHeaderCell>Bill</TableHeaderCell>
+            <TableHeaderCell>Collected By</TableHeaderCell>
             <TableHeaderCell>Area</TableHeaderCell>
             <TableHeaderCell>Address</TableHeaderCell>
             <TableHeaderCell>Status</TableHeaderCell>
-            <TableHeaderCell>Created At</TableHeaderCell>
+            <TableHeaderCell>Collection Time</TableHeaderCell>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -255,7 +255,7 @@ const MBillPaidList = () => {
                 <TableCell>{bill?.userId}</TableCell>
                 <TableCell>{bill?.mobile || ""}</TableCell>
                 <TableCell>{bill?.monthName || "-"}</TableCell>
-                <TableCell>{bill?.bill?.price || ""}</TableCell>
+                <TableCell>{bill?.user?.bill || 0}</TableCell>
                 <TableCell>
                   <div className="d-flex aic">
                     <Image
@@ -278,7 +278,7 @@ const MBillPaidList = () => {
                     {bill?.status}
                   </Label>
                 </TableCell>
-                <TableCell>{getFormattedDateTime(bill?.createdAt)}</TableCell>
+                <TableCell>{getFormattedDateTime(bill?.updatedAt)}</TableCell>
               </TableRow>
             ))
           ) : (
