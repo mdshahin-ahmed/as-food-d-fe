@@ -163,11 +163,13 @@ const MBillApprovedList = () => {
                       src={bill?.approvedBy?.imageUrl || avatar}
                     />
                     <span className="t-capitalize ml-2">
-                      {bill?.approvedBy?.name}
+                      {bill?.approvedBy?.name || "-"}
                     </span>
                   </div>
                 </TableCell>
-                <TableCell className="t-capitalize">{bill?.area}</TableCell>
+                <TableCell className="t-capitalize">
+                  {bill?.area?.name || "-"}
+                </TableCell>
                 <TableCell>{bill?.user?.address}</TableCell>
                 <TableCell>
                   <Label
@@ -175,7 +177,7 @@ const MBillApprovedList = () => {
                     color={millStatusColor[bill?.status]}
                     className="labelsStyle"
                   >
-                    {bill?.status}
+                    {bill?.status || "-"}
                   </Label>
                 </TableCell>
                 <TableCell>{getFormattedDateTime(bill?.updatedAt)}</TableCell>

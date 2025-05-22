@@ -2,9 +2,7 @@ import avatar from "@/assets/user-avatar.png";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { AiOutlineCheckCircle } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
 import {
-  Button,
   Image,
   Label,
   Popup,
@@ -35,7 +33,6 @@ import TableLoader from "../common/TableLoader";
 const MBillPendingList = () => {
   const client = useClient();
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const [defaultQuery, setDefaultQuery] = useState({
     page: 1,
     limit: 20,
@@ -43,7 +40,7 @@ const MBillPendingList = () => {
     status: "pending",
   });
   const { data: mBillList, isFetching } = useGetQueryDataList(
-    "mbill",
+    "mbill/pending",
     defaultQuery
   );
   const { isOpen, onClose, setCustom } = useDisclosure();
@@ -145,10 +142,10 @@ const MBillPendingList = () => {
                   <div className="d-flex aic">
                     <Image
                       className="b-radius-50 headerAvatar"
-                      src={bill?.imageUrl || avatar}
+                      src={bill?.user?.imageUrl || avatar}
                     />
                     <span className="t-capitalize ml-2">
-                      {bill?.user?.name}{" "}
+                      {bill?.user?.name || "-"}{" "}
                       <Label
                         circular
                         color={bill?.user?.isActive ? "green" : "red"}
@@ -158,19 +155,21 @@ const MBillPendingList = () => {
                     </span>
                   </div>
                 </TableCell>
-                <TableCell>{bill?.userId}</TableCell>
-                <TableCell>{bill?.mobile || ""}</TableCell>
+                <TableCell>{bill?.userId || "-"}</TableCell>
+                <TableCell>{bill?.mobile || "-"}</TableCell>
                 <TableCell>{bill?.monthName || "-"}</TableCell>
                 <TableCell>{bill?.user?.bill || 0}</TableCell>
-                <TableCell className="t-capitalize">{bill?.area}</TableCell>
-                <TableCell>{bill?.user?.address}</TableCell>
+                <TableCell className="t-capitalize">
+                  {bill?.area?.name || "-"}
+                </TableCell>
+                <TableCell>{bill?.user?.address || "-"}</TableCell>
                 <TableCell>
                   <Label
                     size="tiny"
                     color={millStatusColor[bill?.status]}
                     className="labelsStyle"
                   >
-                    {bill?.status}
+                    {bill?.status || "-"}
                   </Label>
                 </TableCell>
                 <TableCell>{getFormattedDateTime(bill?.createdAt)}</TableCell>

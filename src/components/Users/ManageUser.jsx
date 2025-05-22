@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "semantic-ui-react";
-import { areaListOptions, RoleOptions } from "../../constant/common.constant";
+import { RoleOptions } from "../../constant/common.constant";
 import { useClient } from "../../hooks/pure/useClient";
 import { updateUserSchema, userSchema } from "../../validations/user.schema";
 import AsToast from "../common/AsToast";
@@ -74,6 +74,11 @@ const ManageUser = () => {
         </div>
       );
     },
+  });
+
+  const { data: areaList = [], isFetching: isAreaListFetching } = useQuery({
+    queryKey: [`area-list`],
+    queryFn: () => client(`area/list`),
   });
 
   const handleUserSubmit = (data) => {
@@ -148,7 +153,9 @@ const ManageUser = () => {
               required
               label="Area"
               placeholder="Select area"
-              options={areaListOptions}
+              options={areaList}
+              loading={isAreaListFetching}
+              disabled={isAreaListFetching}
             />
 
             <AsSelect

@@ -11,6 +11,7 @@ import ManageUser from "../../components/Users/ManageUser";
 import MBillPaidList from "../../components/MBillPaid/MBillPaidList";
 import MBillPendingList from "../../components/MBillPending/MBillPendingList";
 import MBillApprovedList from "../../components/MBillApproved/MBillApprovedList";
+import AreaListPage from "../../components/Area/AreaListPage";
 
 function AuthenticatedApp() {
   return (
@@ -47,7 +48,7 @@ function AuthenticatedApp() {
       <Route
         path="/paid-bills"
         element={
-          <AuthorizedRoute permissions={["admin", "employee"]}>
+          <AuthorizedRoute permissions={["admin"]}>
             <AppLayout>
               <MBillPaidList />
             </AppLayout>
@@ -71,6 +72,16 @@ function AuthenticatedApp() {
           <AuthorizedRoute permissions={["admin"]}>
             <AppLayout>
               <UsersList />
+            </AppLayout>
+          </AuthorizedRoute>
+        }
+      />
+      <Route
+        path="/area"
+        element={
+          <AuthorizedRoute permissions={["admin"]}>
+            <AppLayout>
+              <AreaListPage />
             </AppLayout>
           </AuthorizedRoute>
         }

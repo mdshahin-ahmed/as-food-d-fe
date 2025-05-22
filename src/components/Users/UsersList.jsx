@@ -182,9 +182,9 @@ const UsersList = () => {
                 </TableCell>
                 <TableCell>{user?.bill || 0}</TableCell>
                 <TableCell>{user?.email || "-"}</TableCell>
-                <TableCell>{user?.mobile}</TableCell>
-                <TableCell>{user?.area}</TableCell>
-                <TableCell>{user?.address}</TableCell>
+                <TableCell>{user?.mobile || "-"}</TableCell>
+                <TableCell>{user?.area?.name || "-"}</TableCell>
+                <TableCell>{user?.address || "-"}</TableCell>
                 <TableCell>
                   <Label
                     size="tiny"

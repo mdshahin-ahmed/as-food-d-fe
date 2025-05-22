@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import {
   Button,
+  Popup,
   Table,
   TableBody,
   TableCell,
@@ -12,36 +12,38 @@ import {
 import { useClient } from "../../hooks/pure/useClient";
 import { useDisclosure } from "../../hooks/pure/useDisclosure";
 import { getFormattedDateTime } from "../../utils/helper";
-import CustomPagination from "../common/CustomPagination";
 import NoDataAvailable from "../common/NoDataAvailable";
 import TableLoader from "../common/TableLoader";
-import AddBillModal from "./AddBillModal";
+import AddAreaModal from "./AddAreaModal";
+import { FiEdit2 } from "react-icons/fi";
 
-const BillListPage = () => {
+const AreaListPage = () => {
   const client = useClient();
   const { isOpen, onClose, setCustom } = useDisclosure();
 
-  const [queryFilter, setQueryFilter] = useState({
-    page: 1,
-    limit: 20,
+  // const [queryFilter, setQueryFilter] = useState({
+  //   page: 1,
+  //   limit: 20,
+  // });
+
+  const { data: areaList, isFetching: isAreaListFetching } = useQuery({
+    queryKey: ["area-list"],
+    queryFn: () => client("area"),
   });
 
-  const { data: billList, isFetching: isBillListFetching } = useQuery({
-    queryKey: ["bill-list"],
-    queryFn: () => client("bill"),
-  });
+  console.log(areaList);
 
   return (
     <>
-      <AddBillModal onClose={onClose} open={isOpen} />
+      <AddAreaModal onClose={onClose} open={isOpen} />
       <div className="previewLayout">
         <div className="pageHeader">
           <div className="title">
-            <h5>Bills ({billList?.meta?.total || 0})</h5>
+            <h5>Areas ({areaList?.length || 0})</h5>
           </div>
           <div className="action">
             <Button onClick={() => setCustom(true)} primary>
-              Add Bill
+              Add Area
             </Button>
           </div>
         </div>
@@ -49,43 +51,34 @@ const BillListPage = () => {
           <TableHeader>
             <TableRow>
               <TableHeaderCell>#</TableHeaderCell>
-              <TableHeaderCell>Month Name</TableHeaderCell>
-              {/* <TableHeaderCell>Price</TableHeaderCell> */}
+              <TableHeaderCell>Area Name</TableHeaderCell>
               <TableHeaderCell>Created At</TableHeaderCell>
               <TableHeaderCell>Updated At</TableHeaderCell>
-              {/* {user?.role === "admin" && (
-                <TableHeaderCell>Action</TableHeaderCell>
-              )} */}
+              <TableHeaderCell>Action</TableHeaderCell>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {billList?.result?.length > 0 && !isBillListFetching ? (
-              billList?.result?.map((bill, index) => (
+            {areaList?.length > 0 && !isAreaListFetching ? (
+              areaList?.map((area, index) => (
                 <TableRow key={index}>
-                  <TableCell>
-                    {(queryFilter?.page - 1) * queryFilter?.limit + index + 1}
-                  </TableCell>
+                  <TableCell>{index + 1}</TableCell>
                   <TableCell className="t-capitalize">
-                    {bill?.monthName || "-"}
+                    {area?.name || "-"}
                   </TableCell>
-                  {/* <TableCell>{bill?.price || "-"}</TableCell> */}
-
-                  <TableCell>{getFormattedDateTime(bill?.createdAt)}</TableCell>
-                  <TableCell>{getFormattedDateTime(bill?.updatedAt)}</TableCell>
-
-                  {/* <TableCell>
+                  <TableCell>{getFormattedDateTime(area?.createdAt)}</TableCell>
+                  <TableCell>{getFormattedDateTime(area?.updatedAt)}</TableCell>
+                  <TableCell>
                     <Popup
                       size="mini"
                       position="top center"
-                      content="Edit Bill"
+                      content="Edit Area"
                       trigger={
                         <Button
                           icon
                           onClick={() =>
                             setCustom({
-                              id: bill?._id,
-                              monthName: bill?.monthName,
-                              price: bill?.price,
+                              name: area?.name,
+                              id: area?._id,
                             })
                           }
                         >
@@ -93,13 +86,13 @@ const BillListPage = () => {
                         </Button>
                       }
                     />
-                  </TableCell> */}
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
               <>
-                {isBillListFetching && <TableLoader columns={4} />}
-                {!isBillListFetching && (
+                {isAreaListFetching && <TableLoader columns={4} />}
+                {!isAreaListFetching && (
                   <TableRow>
                     <TableCell colSpan={4}>
                       <NoDataAvailable />
@@ -110,16 +103,16 @@ const BillListPage = () => {
             )}
           </TableBody>
         </Table>
-        <CustomPagination
-          totalPages={billList?.meta?.totalPage || 0}
+        {/* <CustomPagination
+          totalPages={areaList?.meta?.totalPage || 0}
           activePage={queryFilter?.page || 0}
           onPageChange={(value) =>
             setQueryFilter((prev) => ({ ...prev, page: value }))
           }
-        />
+        /> */}
       </div>
     </>
   );
 };
 
-export default BillListPage;
+export default AreaListPage;

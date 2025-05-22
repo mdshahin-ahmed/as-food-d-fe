@@ -8,6 +8,7 @@ import { SiGoogleanalytics } from "react-icons/si";
 import { NavLink, useLocation } from "react-router-dom";
 import { Image, List, ListItem, Popup } from "semantic-ui-react";
 import { useAuth } from "../../../context/app/useAuth";
+import { FiMapPin } from "react-icons/fi";
 
 const routeList = [
   {
@@ -32,12 +33,18 @@ const routeList = [
     content: "Paid Bills",
     pathname: "paid-bills",
     src: LiaMoneyBillWaveAltSolid,
-    permissions: ["admin", "employee"],
+    permissions: ["admin"],
   },
   {
     content: "Approved Bills",
     pathname: "approved-bills",
     src: FcApproval,
+    permissions: ["admin"],
+  },
+  {
+    content: "Area",
+    pathname: "area",
+    src: FiMapPin,
     permissions: ["admin"],
   },
   {
