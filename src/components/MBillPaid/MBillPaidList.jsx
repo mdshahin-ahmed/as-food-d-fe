@@ -16,11 +16,7 @@ import {
   TableRow,
 } from "semantic-ui-react";
 import { useGetQueryDataList } from "../../api/query.api";
-import {
-  areaListOptions,
-  millStatusColor,
-  monthsOptions,
-} from "../../constant/common.constant";
+import { millStatusColor, monthsOptions } from "../../constant/common.constant";
 import { useClient } from "../../hooks/pure/useClient";
 import { useDisclosure } from "../../hooks/pure/useDisclosure";
 import { getFormattedDateTime } from "../../utils/helper";
@@ -47,6 +43,11 @@ const MBillPaidList = () => {
   const { data: employeeList = [], isFetching: isEmployeeLoading } = useQuery({
     queryKey: [`employee-list`],
     queryFn: () => client(`user/employee`),
+  });
+
+  const { data: areaList = [], isFetching: isAreaListFetching } = useQuery({
+    queryKey: [`area-list`],
+    queryFn: () => client(`area/list`),
   });
 
   const { isOpen, onClose, setCustom } = useDisclosure();
@@ -169,7 +170,9 @@ const MBillPaidList = () => {
           <Select
             // className="orderFilterDropdown"
             clearable
-            options={areaListOptions}
+            options={areaList}
+            loading={isAreaListFetching}
+            disabled={isAreaListFetching}
             onChange={(e, { value }) =>
               setDefaultQuery((prev) => ({ ...prev, area: value }))
             }

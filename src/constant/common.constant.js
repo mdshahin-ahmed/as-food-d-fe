@@ -42,16 +42,3 @@ export const millStatusColor = {
   approved: "green",
   cancel: "red",
 };
-
-export const areaListOptions = [
-  {
-    key: "karatiya",
-    text: "Karatiya",
-    value: "karatiya",
-  },
-  {
-    key: "tangail",
-    text: "Tangail",
-    value: "tangail",
-  },
-];

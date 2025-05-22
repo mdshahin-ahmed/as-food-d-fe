@@ -1,5 +1,5 @@
 import avatar from "@/assets/user-avatar.png";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import {
@@ -15,11 +15,7 @@ import {
   TableRow,
 } from "semantic-ui-react";
 import { useGetQueryDataList } from "../../api/query.api";
-import {
-  areaListOptions,
-  millStatusColor,
-  monthsOptions,
-} from "../../constant/common.constant";
+import { millStatusColor, monthsOptions } from "../../constant/common.constant";
 import { useClient } from "../../hooks/pure/useClient";
 import { useDisclosure } from "../../hooks/pure/useDisclosure";
 import { getFormattedDateTime } from "../../utils/helper";
@@ -43,6 +39,10 @@ const MBillPendingList = () => {
     "mbill/pending",
     defaultQuery
   );
+  const { data: areaList = [], isFetching: isAreaListFetching } = useQuery({
+    queryKey: [`area-list`],
+    queryFn: () => client(`area/list`),
+  });
   const { isOpen, onClose, setCustom } = useDisclosure();
 
   const { mutate: paidMutate, isPending } = useMutation({
@@ -105,7 +105,9 @@ const MBillPendingList = () => {
           <Select
             // className="orderFilterDropdown"
             clearable
-            options={areaListOptions}
+            options={areaList}
+            loading={isAreaListFetching}
+            disabled={isAreaListFetching}
             onChange={(e, { value }) =>
               setDefaultQuery((prev) => ({ ...prev, area: value }))
             }
