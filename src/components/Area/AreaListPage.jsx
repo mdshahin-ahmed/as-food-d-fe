@@ -41,7 +41,7 @@ const AreaListPage = () => {
           <div className="title">
             <h5>Areas ({areaList?.length || 0})</h5>
           </div>
-          <div className="action">
+          <div className="pageAction">
             <Button onClick={() => setCustom(true)} primary>
               Add Area
             </Button>

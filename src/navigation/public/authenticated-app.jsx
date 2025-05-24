@@ -12,6 +12,7 @@ import MBillPaidList from "../../components/MBillPaid/MBillPaidList";
 import MBillPendingList from "../../components/MBillPending/MBillPendingList";
 import MBillApprovedList from "../../components/MBillApproved/MBillApprovedList";
 import AreaListPage from "../../components/Area/AreaListPage";
+import CustomTable from "../../components/Area/CustomTable";
 
 function AuthenticatedApp() {
   return (
@@ -22,6 +23,16 @@ function AuthenticatedApp() {
           <AppLayout>
             <Home />
           </AppLayout>
+        }
+      />
+      <Route
+        path="/table"
+        element={
+          <AuthorizedRoute permissions={["admin"]}>
+            <AppLayout>
+              <CustomTable />
+            </AppLayout>
+          </AuthorizedRoute>
         }
       />
       <Route

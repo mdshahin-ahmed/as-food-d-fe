@@ -2,18 +2,7 @@ import avatar from "@/assets/user-avatar.png";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { AiOutlineCheckCircle } from "react-icons/ai";
-import {
-  Image,
-  Label,
-  Popup,
-  Select,
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableHeaderCell,
-  TableRow,
-} from "semantic-ui-react";
+import { Image, Label, Loader, Popup, Select } from "semantic-ui-react";
 import { useGetQueryDataList } from "../../api/query.api";
 import { millStatusColor, monthsOptions } from "../../constant/common.constant";
 import { useClient } from "../../hooks/pure/useClient";
@@ -115,32 +104,120 @@ const MBillPendingList = () => {
           />
         </div>
       </div>
-      <Table basic>
-        <TableHeader>
-          <TableRow>
-            <TableHeaderCell>#</TableHeaderCell>
-            <TableHeaderCell>Name</TableHeaderCell>
-            <TableHeaderCell>User Id</TableHeaderCell>
-            <TableHeaderCell>Mobile</TableHeaderCell>
-            <TableHeaderCell>Month</TableHeaderCell>
-            <TableHeaderCell>Bill</TableHeaderCell>
-            <TableHeaderCell>Area</TableHeaderCell>
-            <TableHeaderCell>Address</TableHeaderCell>
-            <TableHeaderCell>Status</TableHeaderCell>
-            <TableHeaderCell>Created At</TableHeaderCell>
-            <TableHeaderCell className="billActionsHeader">
-              Actions
-            </TableHeaderCell>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {mBillList?.result?.length > 0 && !isFetching ? (
-            mBillList?.result?.map((bill, index) => (
-              <TableRow key={bill?._id}>
-                <TableCell>
+
+      <div className="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>User Id</th>
+              <th>Mobile</th>
+              <th>Month</th>
+              <th>Bill</th>
+              <th>Area</th>
+              <th>Address</th>
+              <th>Status</th>
+              <th>Created At</th>
+              <th className="billActionsHeader">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {mBillList?.result?.length > 0 && !isFetching ? (
+              mBillList?.result?.map((bill, index) => (
+                <tr key={bill?._id}>
+                  <td>
+                    {(defaultQuery?.page - 1) * defaultQuery?.limit + index + 1}
+                  </td>
+                  <td>
+                    <div className="d-flex aic">
+                      <Image
+                        className="b-radius-50 headerAvatar"
+                        src={bill?.user?.imageUrl || avatar}
+                      />
+                      <span className="t-capitalize ml-2">
+                        {bill?.user?.name || "-"}{" "}
+                        <Label
+                          circular
+                          color={bill?.user?.isActive ? "green" : "red"}
+                          empty
+                          size="mini"
+                        />
+                      </span>
+                    </div>
+                  </td>
+                  <td>{bill?.userId || "-"}</td>
+                  <td>{bill?.mobile || "-"}</td>
+                  <td>{bill?.monthName || "-"}</td>
+                  <td>{bill?.user?.bill || 0}</td>
+                  <td className="t-capitalize">{bill?.area?.name || "-"}</td>
+                  <td>{bill?.user?.address || "-"}</td>
+                  <td>
+                    <Label
+                      size="tiny"
+                      color={millStatusColor[bill?.status]}
+                      className="labelsStyle"
+                    >
+                      {bill?.status || "-"}
+                    </Label>
+                  </td>
+                  <td>{getFormattedDateTime(bill?.createdAt)}</td>
+                  <td className="d-flex">
+                    <Popup
+                      content="Pay Bill"
+                      position="top center"
+                      trigger={
+                        <Select
+                          className="billActionsDropdown"
+                          placeholder="Pay"
+                          clearable
+                          disabled={bill?.status === "paid"}
+                          options={[
+                            {
+                              key: "paid",
+                              value: "paid",
+                              text: "Paid",
+                            },
+                          ]}
+                          onChange={(e, { value }) =>
+                            setCustom({ status: value, id: bill?._id })
+                          }
+                        />
+                      }
+                    />
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <>
+                {isFetching && <TableLoader columns={11} />}
+                {!isFetching && (
+                  <tr>
+                    <td colSpan="11">
+                      <NoDataAvailable />
+                    </td>
+                  </tr>
+                )}
+              </>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="card-view">
+        {mBillList?.result?.length > 0 && !isPending ? (
+          mBillList?.result?.map((bill, index) => (
+            <div className="card" key={index}>
+              <div className="card-row">
+                <span className="card-label">#</span>
+                <span className="card-value">
                   {(defaultQuery?.page - 1) * defaultQuery?.limit + index + 1}
-                </TableCell>
-                <TableCell>
+                </span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Name</span>
+                <span className="card-value">
+                  {" "}
                   <div className="d-flex aic">
                     <Image
                       className="b-radius-50 headerAvatar"
@@ -156,16 +233,37 @@ const MBillPendingList = () => {
                       />
                     </span>
                   </div>
-                </TableCell>
-                <TableCell>{bill?.userId || "-"}</TableCell>
-                <TableCell>{bill?.mobile || "-"}</TableCell>
-                <TableCell>{bill?.monthName || "-"}</TableCell>
-                <TableCell>{bill?.user?.bill || 0}</TableCell>
-                <TableCell className="t-capitalize">
+                </span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">User Id</span>
+                <span className="card-value">{bill?.userId || "-"}</span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Mobile</span>
+                <span className="card-value">{bill?.mobile || "-"}</span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Month</span>
+                <span className="card-value">{bill?.monthName || "-"}</span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Bill</span>
+                <span className="card-value">{bill?.user?.bill || 0}</span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Area</span>
+                <span className="card-value t-capitalize">
                   {bill?.area?.name || "-"}
-                </TableCell>
-                <TableCell>{bill?.user?.address || "-"}</TableCell>
-                <TableCell>
+                </span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Address</span>
+                <span className="card-value">{bill?.user?.address || "-"}</span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Status</span>
+                <span className="card-value">
                   <Label
                     size="tiny"
                     color={millStatusColor[bill?.status]}
@@ -173,9 +271,17 @@ const MBillPendingList = () => {
                   >
                     {bill?.status || "-"}
                   </Label>
-                </TableCell>
-                <TableCell>{getFormattedDateTime(bill?.createdAt)}</TableCell>
-                <TableCell className="d-flex">
+                </span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Created At</span>
+                <span className="card-value">
+                  {getFormattedDateTime(bill?.createdAt)}
+                </span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Actions</span>
+                <span className="card-value d-flex">
                   <Popup
                     content="Pay Bill"
                     position="top center"
@@ -198,23 +304,21 @@ const MBillPendingList = () => {
                       />
                     }
                   />
-                </TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <>
-              {isFetching && <TableLoader columns={11} />}
-              {!isFetching && (
-                <TableRow>
-                  <TableCell colSpan="11">
-                    <NoDataAvailable />
-                  </TableCell>
-                </TableRow>
-              )}
-            </>
-          )}
-        </TableBody>
-      </Table>
+                </span>
+              </div>
+            </div>
+          ))
+        ) : (
+          <>
+            {isPending && <Loader active />}
+            {!isPending && (
+              <div className="card">
+                <NoDataAvailable />
+              </div>
+            )}
+          </>
+        )}
+      </div>
       <CustomPagination
         totalPages={mBillList?.meta?.totalPage || 0}
         activePage={defaultQuery?.page || 0}
