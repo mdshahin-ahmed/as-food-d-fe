@@ -1,7 +1,6 @@
 import avatar from "@/assets/user-avatar.png";
 import { BsTelephone } from "react-icons/bs";
 import { FaEdit, FaRegEnvelope } from "react-icons/fa";
-import { FaBangladeshiTakaSign } from "react-icons/fa6";
 import { LuHotel } from "react-icons/lu";
 import { MdOutlineMeetingRoom } from "react-icons/md";
 import { Button, Grid, GridColumn, Image, Popup } from "semantic-ui-react";
@@ -12,7 +11,6 @@ import UpdateProfileModal from "../Users/UpdateProfileModal";
 
 const Profile = () => {
   const { user } = useAuth();
-  const { isOpen, onClose, setCustom: setRechargeCustom } = useDisclosure();
   const {
     isOpen: isPassOpen,
     onClose: onPassClose,
@@ -62,25 +60,14 @@ const Profile = () => {
               </h4>
               <h4 className="mt-0 profileDetails">
                 <LuHotel />
-                <span className="t-capitalize">{user?.hostel}</span>
+                <span className="t-capitalize">{user?.area?.name}</span>
               </h4>
               <h4 className="mt-0 profileDetails">
                 <MdOutlineMeetingRoom />
-                <span className="t-capitalize">{user?.room}</span>
+                <span className="t-capitalize">{user?.address}</span>
               </h4>
 
-              <Button
-                // className="ml-2"
-                primary
-                onClick={() => setRechargeCustom(true)}
-              >
-                Add Balance
-              </Button>
-              <Button
-                onClick={() => setPassCustom(true)}
-                className="changePassBtn"
-                color="red"
-              >
+              <Button onClick={() => setPassCustom(true)} color="red">
                 Change password
               </Button>
             </GridColumn>

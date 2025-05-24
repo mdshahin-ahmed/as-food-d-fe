@@ -8,12 +8,8 @@ import {
   Button,
   Image,
   Label,
+  Loader,
   Popup,
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableHeaderCell,
   TableRow,
 } from "semantic-ui-react";
 import { useGetQueryDataList } from "../../api/query.api";
@@ -130,30 +126,152 @@ const UsersList = () => {
           </Button>
         </div>
       </div>
-      <Table basic>
-        <TableHeader>
-          <TableRow>
-            <TableHeaderCell>#</TableHeaderCell>
-            <TableHeaderCell>Name</TableHeaderCell>
-            <TableHeaderCell>User Id</TableHeaderCell>
-            <TableHeaderCell>Role</TableHeaderCell>
-            <TableHeaderCell>Bill</TableHeaderCell>
-            <TableHeaderCell>Email</TableHeaderCell>
-            <TableHeaderCell>Mobile</TableHeaderCell>
-            <TableHeaderCell>Area</TableHeaderCell>
-            <TableHeaderCell>Address</TableHeaderCell>
-            <TableHeaderCell>Status</TableHeaderCell>
-            <TableHeaderCell>Actions</TableHeaderCell>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {usersList?.result?.length > 0 && !isFetching ? (
-            usersList?.result?.map((user, index) => (
-              <TableRow key={user?._id}>
-                <TableCell>
+
+      <div className="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>User Id</th>
+              <th>Role</th>
+              <th>Bill</th>
+              <th>Email</th>
+              <th>Mobile</th>
+              <th>Area</th>
+              <th>Address</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {usersList?.result?.length > 0 && !isFetching ? (
+              usersList?.result?.map((user, index) => (
+                <tr key={user?._id}>
+                  <td>
+                    {(defaultQuery?.page - 1) * defaultQuery?.limit + index + 1}
+                  </td>
+                  <td>
+                    <div className="d-flex aic">
+                      <Image
+                        className="b-radius-50 headerAvatar"
+                        src={user?.imageUrl || avatar}
+                      />
+                      <span className="t-capitalize ml-2">
+                        {user?.name}{" "}
+                        <Label
+                          circular
+                          color={user?.isActive ? "green" : "red"}
+                          empty
+                          size="mini"
+                        />
+                      </span>
+                    </div>
+                  </td>
+                  <td>{user?.userId || "-"}</td>
+                  <td>
+                    <Label
+                      size="medium"
+                      color={userRoleColor[user?.role]}
+                      className="labelsStyle"
+                    >
+                      {user?.role}
+                    </Label>
+                  </td>
+                  <td>{user?.bill || 0}</td>
+                  <td>{user?.email || "-"}</td>
+                  <td>{user?.mobile || "-"}</td>
+                  <td>{user?.area?.name || "-"}</td>
+                  <td>{user?.address || "-"}</td>
+                  <td>
+                    <Label
+                      size="tiny"
+                      color={user?.isActive ? "green" : "red"}
+                      className="labelsStyle"
+                    >
+                      {user?.isActive ? "Active" : "Blocked"}
+                    </Label>
+                  </td>
+                  <td className="d-flex">
+                    <Popup
+                      content="Edit User"
+                      position="top center"
+                      trigger={
+                        <Button
+                          icon
+                          onClick={() => navigate(`edit/${user?._id}`)}
+                        >
+                          <FiEdit2 />
+                        </Button>
+                      }
+                    />
+                    <Popup
+                      content="Block User"
+                      position="top center"
+                      trigger={
+                        <Button
+                          id="userBlockButton"
+                          icon
+                          onClick={() =>
+                            setCustom({
+                              id: user?._id,
+                              isActive: user?.isActive,
+                            })
+                          }
+                        >
+                          <BiBlock />
+                        </Button>
+                      }
+                    />
+                    {/* <Popup
+                    content="Delete"
+                    position="top center"
+                    trigger={
+                      <Button
+                        // color="red"
+                        // disabled
+                        // disabled={
+                        //   user?.role === "admin" || user?.role === "manager"
+                        // }
+                        icon
+                        onClick={() => setDeleteCustom(user?._id)}
+                      >
+                        <MdDelete />
+                      </Button>
+                    }
+                  /> */}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <>
+                {isFetching && <TableLoader columns={11} />}
+                {!isFetching && (
+                  <TableRow>
+                    <td colSpan="11">
+                      <NoDataAvailable />
+                    </td>
+                  </TableRow>
+                )}
+              </>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="card-view">
+        {usersList?.result?.length > 0 && !isFetching ? (
+          usersList?.result?.map((user, index) => (
+            <div className="card" key={index}>
+              <div className="card-row">
+                <span className="card-label">#</span>
+                <span className="card-value">
                   {(defaultQuery?.page - 1) * defaultQuery?.limit + index + 1}
-                </TableCell>
-                <TableCell>
+                </span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Name</span>
+                <span className="card-value">
                   <div className="d-flex aic">
                     <Image
                       className="b-radius-50 headerAvatar"
@@ -169,9 +287,15 @@ const UsersList = () => {
                       />
                     </span>
                   </div>
-                </TableCell>
-                <TableCell>{user?.userId}</TableCell>
-                <TableCell>
+                </span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">User Id</span>
+                <span className="card-value">{user?.userId || "-"}</span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Role</span>
+                <span className="card-value">
                   <Label
                     size="medium"
                     color={userRoleColor[user?.role]}
@@ -179,13 +303,31 @@ const UsersList = () => {
                   >
                     {user?.role}
                   </Label>
-                </TableCell>
-                <TableCell>{user?.bill || 0}</TableCell>
-                <TableCell>{user?.email || "-"}</TableCell>
-                <TableCell>{user?.mobile || "-"}</TableCell>
-                <TableCell>{user?.area?.name || "-"}</TableCell>
-                <TableCell>{user?.address || "-"}</TableCell>
-                <TableCell>
+                </span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Bill</span>
+                <span className="card-value">{user?.bill || 0}</span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Email</span>
+                <span className="card-value">{user?.email || "-"}</span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Mobile</span>
+                <span className="card-value">{user?.mobile || "-"}</span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Area</span>
+                <span className="card-value">{user?.area?.name || "-"}</span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Address</span>
+                <span className="card-value">{user?.address || "-"}</span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Status</span>
+                <span className="card-value">
                   <Label
                     size="tiny"
                     color={user?.isActive ? "green" : "red"}
@@ -193,8 +335,11 @@ const UsersList = () => {
                   >
                     {user?.isActive ? "Active" : "Blocked"}
                   </Label>
-                </TableCell>
-                <TableCell className="d-flex">
+                </span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Action</span>
+                <span className="card-value d-flex">
                   <Popup
                     content="Edit User"
                     position="top center"
@@ -215,14 +360,20 @@ const UsersList = () => {
                         id="userBlockButton"
                         icon
                         onClick={() =>
-                          setCustom({ id: user?._id, isActive: user?.isActive })
+                          setCustom({
+                            id: user?._id,
+                            isActive: user?.isActive,
+                          })
                         }
                       >
                         <BiBlock />
                       </Button>
                     }
                   />
-                  {/* <Popup
+                </span>
+              </div>
+
+              {/* <Popup
                     content="Delete"
                     position="top center"
                     trigger={
@@ -239,23 +390,20 @@ const UsersList = () => {
                       </Button>
                     }
                   /> */}
-                </TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <>
-              {isFetching && <TableLoader columns={11} />}
-              {!isFetching && (
-                <TableRow>
-                  <TableCell colSpan="11">
-                    <NoDataAvailable />
-                  </TableCell>
-                </TableRow>
-              )}
-            </>
-          )}
-        </TableBody>
-      </Table>
+            </div>
+          ))
+        ) : (
+          <>
+            {isFetching && <Loader active />}
+            {!isFetching && (
+              <div className="card">
+                <NoDataAvailable />
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
       <CustomPagination
         totalPages={usersList?.meta?.totalPage || 0}
         activePage={defaultQuery?.page || 0}
