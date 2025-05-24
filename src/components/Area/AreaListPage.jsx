@@ -1,21 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  Button,
-  Popup,
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableHeaderCell,
-  TableRow,
-} from "semantic-ui-react";
+import { FiEdit2 } from "react-icons/fi";
+import { Button, Loader, Popup } from "semantic-ui-react";
 import { useClient } from "../../hooks/pure/useClient";
 import { useDisclosure } from "../../hooks/pure/useDisclosure";
 import { getFormattedDateTime } from "../../utils/helper";
 import NoDataAvailable from "../common/NoDataAvailable";
 import TableLoader from "../common/TableLoader";
 import AddAreaModal from "./AddAreaModal";
-import { FiEdit2 } from "react-icons/fi";
 
 const AreaListPage = () => {
   const client = useClient();
@@ -47,27 +38,93 @@ const AreaListPage = () => {
             </Button>
           </div>
         </div>
-        <Table basic>
-          <TableHeader>
-            <TableRow>
-              <TableHeaderCell>#</TableHeaderCell>
-              <TableHeaderCell>Area Name</TableHeaderCell>
-              <TableHeaderCell>Created At</TableHeaderCell>
-              <TableHeaderCell>Updated At</TableHeaderCell>
-              <TableHeaderCell>Action</TableHeaderCell>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {areaList?.length > 0 && !isAreaListFetching ? (
-              areaList?.map((area, index) => (
-                <TableRow key={index}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell className="t-capitalize">
+
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Area Name</th>
+                <th>Created At</th>
+                <th>Updated At</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {areaList?.length > 0 && !isAreaListFetching ? (
+                areaList?.map((area, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td className="t-capitalize">{area?.name || "-"}</td>
+                    <td>{getFormattedDateTime(area?.createdAt)}</td>
+                    <td>{getFormattedDateTime(area?.updatedAt)}</td>
+                    <td>
+                      <Popup
+                        size="mini"
+                        position="top center"
+                        content="Edit Area"
+                        trigger={
+                          <Button
+                            icon
+                            onClick={() =>
+                              setCustom({
+                                name: area?.name,
+                                id: area?._id,
+                              })
+                            }
+                          >
+                            <FiEdit2 />
+                          </Button>
+                        }
+                      />
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <>
+                  {isAreaListFetching && <TableLoader columns={4} />}
+                  {!isAreaListFetching && (
+                    <tr>
+                      <td colSpan={4}>
+                        <NoDataAvailable />
+                      </td>
+                    </tr>
+                  )}
+                </>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="card-view">
+          {areaList?.length > 0 && !isAreaListFetching ? (
+            areaList?.map((area, index) => (
+              <div className="card" key={index}>
+                <div className="card-row">
+                  <span className="card-label">#</span>
+                  <span className="card-value">{index + 1}</span>
+                </div>
+                <div className="card-row">
+                  <span className="card-label">Name</span>
+                  <span className="card-value t-capitalize">
                     {area?.name || "-"}
-                  </TableCell>
-                  <TableCell>{getFormattedDateTime(area?.createdAt)}</TableCell>
-                  <TableCell>{getFormattedDateTime(area?.updatedAt)}</TableCell>
-                  <TableCell>
+                  </span>
+                </div>
+                <div className="card-row">
+                  <span className="card-label">Created At</span>
+                  <span className="card-value">
+                    {getFormattedDateTime(area?.createdAt)}
+                  </span>
+                </div>
+                <div className="card-row">
+                  <span className="card-label">Updated At</span>
+                  <span className="card-value">
+                    {getFormattedDateTime(area?.updatedAt)}
+                  </span>
+                </div>
+                <div className="card-row">
+                  <span className="card-label">Action</span>
+                  <span className="card-value">
                     <Popup
                       size="mini"
                       position="top center"
@@ -86,23 +143,22 @@ const AreaListPage = () => {
                         </Button>
                       }
                     />
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <>
-                {isAreaListFetching && <TableLoader columns={4} />}
-                {!isAreaListFetching && (
-                  <TableRow>
-                    <TableCell colSpan={4}>
-                      <NoDataAvailable />
-                    </TableCell>
-                  </TableRow>
-                )}
-              </>
-            )}
-          </TableBody>
-        </Table>
+                  </span>
+                </div>
+              </div>
+            ))
+          ) : (
+            <>
+              {isAreaListFetching && <Loader active />}
+              {!isAreaListFetching && (
+                <div className="card">
+                  <NoDataAvailable />
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
         {/* <CustomPagination
           totalPages={areaList?.meta?.totalPage || 0}
           activePage={queryFilter?.page || 0}

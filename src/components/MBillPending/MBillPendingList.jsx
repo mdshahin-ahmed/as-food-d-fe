@@ -205,7 +205,7 @@ const MBillPendingList = () => {
       </div>
 
       <div className="card-view">
-        {mBillList?.result?.length > 0 && !isPending ? (
+        {mBillList?.result?.length > 0 && !isFetching ? (
           mBillList?.result?.map((bill, index) => (
             <div className="card" key={index}>
               <div className="card-row">
@@ -310,8 +310,8 @@ const MBillPendingList = () => {
           ))
         ) : (
           <>
-            {isPending && <Loader active />}
-            {!isPending && (
+            {isFetching && <Loader active />}
+            {!isFetching && (
               <div className="card">
                 <NoDataAvailable />
               </div>

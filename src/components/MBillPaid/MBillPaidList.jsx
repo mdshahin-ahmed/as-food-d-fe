@@ -7,12 +7,8 @@ import {
   Checkbox,
   Image,
   Label,
+  Loader,
   Select,
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableHeaderCell,
   TableRow,
 } from "semantic-ui-react";
 import { useGetQueryDataList } from "../../api/query.api";
@@ -131,7 +127,7 @@ const MBillPaidList = () => {
         onClose={onClose}
         confirmText="Approve"
         open={isOpen}
-        isLoading={isPending}
+        isLoading={isFetching}
         onConfirm={() => handleApprove()}
         confirm
       />
@@ -186,7 +182,7 @@ const MBillPaidList = () => {
 
       <div>
         {checkList.length > 0 && (
-          <div className="d-flex">
+          <div className="d-flex mb-2">
             <div>
               <div>
                 Total Selected:{" "}
@@ -199,53 +195,134 @@ const MBillPaidList = () => {
                 <span style={{ fontWeight: "bolder" }}>{totalBill}</span>
               </div>
             </div>
-            <Button primary className="ml-2" onClick={() => setCustom(true)}>
+            <Button
+              primary
+              pending={isPending}
+              disabled={isPending}
+              className="ml-2"
+              onClick={() => setCustom(true)}
+            >
               Approve
             </Button>
           </div>
         )}
       </div>
 
-      <Table basic>
-        <TableHeader>
-          <TableRow>
-            <TableHeaderCell>
-              <Checkbox checked={isAllSelected} onChange={handleToggleAll} />
-            </TableHeaderCell>
-            <TableHeaderCell>#</TableHeaderCell>
-            <TableHeaderCell>Name</TableHeaderCell>
-            <TableHeaderCell>User Id</TableHeaderCell>
-            <TableHeaderCell>Mobile</TableHeaderCell>
-            <TableHeaderCell>Month</TableHeaderCell>
-            <TableHeaderCell>Bill</TableHeaderCell>
-            <TableHeaderCell>Collected By</TableHeaderCell>
-            <TableHeaderCell>Area</TableHeaderCell>
-            <TableHeaderCell>Address</TableHeaderCell>
-            <TableHeaderCell>Status</TableHeaderCell>
-            <TableHeaderCell>Collection Time</TableHeaderCell>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {mBillList?.result?.length > 0 && !isFetching ? (
-            mBillList?.result?.map((bill, index) => (
-              <TableRow key={bill?._id}>
-                <TableCell>
-                  <Checkbox
-                    checked={checkList.some((item) => item.id === bill._id)}
-                    onChange={() => handleCheckboxChange(bill)}
-                  />
-                </TableCell>
-                <TableCell>
+      <div className="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>
+                <Checkbox checked={isAllSelected} onChange={handleToggleAll} />
+              </th>
+              <th>#</th>
+              <th>Name</th>
+              <th>User Id</th>
+              <th>Mobile</th>
+              <th>Month</th>
+              <th>Bill</th>
+              <th>Collected By</th>
+              <th>Area</th>
+              <th>Address</th>
+              <th>Status</th>
+              <th>Collection Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {mBillList?.result?.length > 0 && !isFetching ? (
+              mBillList?.result?.map((bill, index) => (
+                <tr key={bill?._id}>
+                  <td>
+                    <Checkbox
+                      checked={checkList.some((item) => item.id === bill._id)}
+                      onChange={() => handleCheckboxChange(bill)}
+                    />
+                  </td>
+                  <td>
+                    {(defaultQuery?.page - 1) * defaultQuery?.limit + index + 1}
+                  </td>
+                  <td>
+                    <div className="d-flex aic">
+                      <Image
+                        className="b-radius-50 headerAvatar"
+                        src={bill?.user?.imageUrl || avatar}
+                      />
+                      <span className="t-capitalize ml-2">
+                        {bill?.user?.name}{" "}
+                        <Label
+                          circular
+                          color={bill?.user?.isActive ? "green" : "red"}
+                          empty
+                          size="mini"
+                        />
+                      </span>
+                    </div>
+                  </td>
+                  <td>{bill?.userId}</td>
+                  <td>{bill?.mobile || ""}</td>
+                  <td>{bill?.monthName || "-"}</td>
+                  <td>{bill?.user?.bill || 0}</td>
+                  <td>
+                    <div className="d-flex aic">
+                      <Image
+                        className="b-radius-50 headerAvatar"
+                        src={bill?.paidBy?.imageUrl || avatar}
+                      />
+                      <span className="t-capitalize ml-2">
+                        {bill?.paidBy?.name || "-"}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="t-capitalize">{bill?.area?.name || "-"}</td>
+                  <td>{bill?.user?.address || "-"}</td>
+                  <td>
+                    <Label
+                      size="tiny"
+                      color={millStatusColor[bill?.status]}
+                      className="labelsStyle"
+                    >
+                      {bill?.status || "-"}
+                    </Label>
+                  </td>
+                  <td>{getFormattedDateTime(bill?.updatedAt)}</td>
+                </tr>
+              ))
+            ) : (
+              <>
+                {isFetching && <TableLoader columns={12} />}
+                {!isFetching && (
+                  <TableRow>
+                    <td colSpan="12">
+                      <NoDataAvailable />
+                    </td>
+                  </TableRow>
+                )}
+              </>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="card-view">
+        {mBillList?.result?.length > 0 && !isFetching ? (
+          mBillList?.result?.map((bill, index) => (
+            <div className="card" key={index}>
+              <div className="card-row">
+                <span className="card-label">#</span>
+                <span className="card-value">
                   {(defaultQuery?.page - 1) * defaultQuery?.limit + index + 1}
-                </TableCell>
-                <TableCell>
+                </span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Name</span>
+                <span className="card-value">
                   <div className="d-flex aic">
                     <Image
                       className="b-radius-50 headerAvatar"
                       src={bill?.user?.imageUrl || avatar}
                     />
                     <span className="t-capitalize ml-2">
-                      {bill?.user?.name}{" "}
+                      {bill?.user?.name || "-"}{" "}
                       <Label
                         circular
                         color={bill?.user?.isActive ? "green" : "red"}
@@ -254,12 +331,27 @@ const MBillPaidList = () => {
                       />
                     </span>
                   </div>
-                </TableCell>
-                <TableCell>{bill?.userId}</TableCell>
-                <TableCell>{bill?.mobile || ""}</TableCell>
-                <TableCell>{bill?.monthName || "-"}</TableCell>
-                <TableCell>{bill?.user?.bill || 0}</TableCell>
-                <TableCell>
+                </span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">User Id</span>
+                <span className="card-value">{bill?.userId || "-"}</span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Mobile</span>
+                <span className="card-value">{bill?.mobile || "-"}</span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Month</span>
+                <span className="card-value">{bill?.monthName || "-"}</span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Bill</span>
+                <span className="card-value">{bill?.user?.bill || 0}</span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Collected By</span>
+                <span className="card-value">
                   <div className="d-flex aic">
                     <Image
                       className="b-radius-50 headerAvatar"
@@ -269,12 +361,21 @@ const MBillPaidList = () => {
                       {bill?.paidBy?.name || "-"}
                     </span>
                   </div>
-                </TableCell>
-                <TableCell className="t-capitalize">
+                </span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Area</span>
+                <span className="card-value t-capitalize">
                   {bill?.area?.name || "-"}
-                </TableCell>
-                <TableCell>{bill?.user?.address || "-"}</TableCell>
-                <TableCell>
+                </span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Address</span>
+                <span className="card-value">{bill?.user?.address || "-"}</span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Status</span>
+                <span className="card-value">
                   <Label
                     size="tiny"
                     color={millStatusColor[bill?.status]}
@@ -282,24 +383,28 @@ const MBillPaidList = () => {
                   >
                     {bill?.status || "-"}
                   </Label>
-                </TableCell>
-                <TableCell>{getFormattedDateTime(bill?.updatedAt)}</TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <>
-              {isFetching && <TableLoader columns={12} />}
-              {!isFetching && (
-                <TableRow>
-                  <TableCell colSpan="12">
-                    <NoDataAvailable />
-                  </TableCell>
-                </TableRow>
-              )}
-            </>
-          )}
-        </TableBody>
-      </Table>
+                </span>
+              </div>
+              <div className="card-row">
+                <span className="card-label">Collection Time</span>
+                <span className="card-value">
+                  {getFormattedDateTime(bill?.updatedAt)}
+                </span>
+              </div>
+            </div>
+          ))
+        ) : (
+          <>
+            {isFetching && <Loader active />}
+            {!isFetching && (
+              <div className="card">
+                <NoDataAvailable />
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
       <CustomPagination
         totalPages={mBillList?.meta?.totalPage || 0}
         activePage={defaultQuery?.page || 0}
